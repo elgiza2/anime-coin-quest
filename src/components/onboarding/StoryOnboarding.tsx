@@ -10,7 +10,7 @@ export function StoryOnboarding({ onFinish }: { onFinish?: () => void }) {
   const [paused, setPaused] = useState(false);
   const total = STORY_SLIDES.length;
   const isLast = index === total - 1;
-  const slide = STORY_SLIDES[index];
+  const slide = STORY_SLIDES[index] ?? STORY_SLIDES[0]!;
 
   useEffect(() => {
     STORY_SLIDES.forEach((s) => {
