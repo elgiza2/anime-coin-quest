@@ -33,3 +33,5 @@ use the editor.
 
 - App is Arabic RTL (`dir="rtl"` on `<html>`); use logical directions (origin-right for RTL progress, ChevronLeft = forward). Why: every screen reads right-to-left.
 - Start page is a story onboarding in `src/components/onboarding/` with slide content in `story-slides.ts`; visual tokens (glass, story-fade, btn-cta, story animations) live in `src/styles.css`. Why: slides and copy change often without touching layout.
+- Wallet connection uses TON Connect via the lazy browser-only singleton in `src/lib/ton-connect.ts`; its manifest is served from `/api/public/tonconnect-manifest` using the request origin. Why: the wallet library must never run during SSR, and the manifest must match whatever domain the app is opened on.
+- Each start slide has a live canvas effect (`StoryEffects.tsx`) chosen by the slide's `effect` field; effect anchor points are fractions of the artwork, so they must be re-tuned if a slide image changes.

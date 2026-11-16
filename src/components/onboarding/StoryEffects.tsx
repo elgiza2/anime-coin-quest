@@ -204,7 +204,7 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
           const len = Math.max(w, h) * 1.1;
           const spread = 0.05 + 0.03 * Math.sin(now / 1400 + i);
           const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, len);
-          grad.addColorStop(0, "rgba(255,215,140,0.16)");
+          grad.addColorStop(0, "rgba(255,215,140,0.09)");
           grad.addColorStop(1, "rgba(255,215,140,0)");
           ctx.fillStyle = grad;
           ctx.beginPath();

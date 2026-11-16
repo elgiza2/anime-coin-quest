@@ -181,3 +181,8 @@
 @utility animate-rise {
   animation: story-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
+
+/* TON Connect wallet window is English: keep it left-to-right inside the RTL app */
+#tc-widget-root {
+  direction: ltr;
+}
