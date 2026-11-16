@@ -126,7 +126,7 @@ export function StoryOnboarding({ onConnected }: { onConnected?: (address: strin
           className="absolute inset-0 transition-opacity duration-700 ease-out"
           style={{ opacity: i === index ? 1 : 0 }}
         >
-          <div key={i === index ? `on-${index}` : "off"} className={`absolute inset-0 ${i === index ? "animate-kenburns" : ""}`}>
+          <div className={`absolute inset-0 ${i === index ? "animate-kenburns" : ""}`}>
             <SlideMedia slide={s} active={i === index} preload={i === index + 1} />
             {i === index && <StoryEffects effect={s.effect} />}
           </div>
