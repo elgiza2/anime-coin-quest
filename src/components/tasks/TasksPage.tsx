@@ -213,7 +213,7 @@ export function TasksPage({ category }: { category: CategoryFilter }) {
                 <button
                   key={c.id}
                   type="button"
-                  onClick={() => navigate({ search: { c: c.id === "all" ? undefined : c.id }, replace: true })}
+                  onClick={() => navigate({ search: c.id === "all" ? {} : { c: c.id }, replace: true })}
                   className={cn(
                     "flex h-11 items-center gap-2 rounded-full border pe-4 ps-2 text-sm font-semibold transition-colors",
                     active

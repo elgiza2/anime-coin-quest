@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 
 import { TasksPage, tasksQuery, type CategoryFilter } from "@/components/tasks/TasksPage";
 
@@ -6,7 +6,7 @@ const FILTERS: CategoryFilter[] = ["all", "onchain", "game", "social", "partners
 
 export const Route = createFileRoute("/tasks")({
   validateSearch: (search: Record<string, unknown>): { c?: Exclude<CategoryFilter, "all"> } => {
-    const c = search.c;
+    const c = search["c"];
     return typeof c === "string" && FILTERS.includes(c as CategoryFilter) && c !== "all"
       ? { c: c as Exclude<CategoryFilter, "all"> }
       : {};
@@ -32,12 +32,12 @@ function TasksRoute() {
   return <TasksPage category={c ?? "all"} />;
 }
 
-function TasksError({ error }: { error: Error }) {
+function TasksError({ error }: ErrorComponentProps) {
   const router = useRouter();
   return (
     <div role="alert" className="flex min-h-dvh flex-col items-center justify-center gap-4 p-8 text-center">
       <p className="text-foreground">تعذّر تحميل المهام</p>
-      <p className="text-xs text-muted-foreground">{error.message}</p>
+      <p className="text-xs text-muted-foreground">{error instanceof Error ? error.message : String(error)}</p>
       <button type="button" onClick={() => router.invalidate()} className="btn-cta rounded-full px-6 py-2 font-semibold">
         حاول تاني
       </button>

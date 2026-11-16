@@ -43,8 +43,8 @@ function recolor(node: unknown, target: [number, number, number]) {
   }
   if (!node || typeof node !== "object") return;
   const o = node as Record<string, unknown>;
-  if ((o.ty === "fl" || o.ty === "st") && o.c && typeof o.c === "object") {
-    const c = o.c as { a: number; k: unknown };
+  if ((o['ty'] === "fl" || o['ty'] === "st") && o['c'] && typeof o['c'] === "object") {
+    const c = o['c'] as { a: number; k: unknown };
     if (c.a === 0 && Array.isArray(c.k)) tint(c.k as number[], target);
     else if (Array.isArray(c.k))
       (c.k as { s?: number[]; e?: number[] }[]).forEach((kf) => {
@@ -52,8 +52,8 @@ function recolor(node: unknown, target: [number, number, number]) {
         if (kf.e) tint(kf.e, target);
       });
   }
-  if ((o.ty === "gf" || o.ty === "gs") && o.g && typeof o.g === "object") {
-    const g = o.g as { p: number; k: { a: number; k: number[] } };
+  if ((o['ty'] === "gf" || o['ty'] === "gs") && o['g'] && typeof o['g'] === "object") {
+    const g = o['g'] as { p: number; k: { a: number; k: number[] } };
     if (g.k?.a === 0 && Array.isArray(g.k.k)) {
       for (let i = 0; i < g.p; i++) {
         const stop = g.k.k.slice(i * 4 + 1, i * 4 + 4);
