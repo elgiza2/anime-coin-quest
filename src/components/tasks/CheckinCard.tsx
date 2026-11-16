@@ -13,7 +13,7 @@ function DayCell({ day, done, today, big }: { day: number; done: boolean; today:
         done && "border-success/50 bg-success/10",
         !done && today && "border-accent/70 bg-accent/10",
         !done && !today && "border-border bg-background/30",
-        big && "row-span-2 gap-2 border-accent/40 bg-accent/[0.06]",
+        big && "gap-2 border-accent/40 bg-accent/[0.06]",
       )}
     >
       {big && (
@@ -32,7 +32,7 @@ function DayCell({ day, done, today, big }: { day: number; done: boolean; today:
           </span>
         )}
       </span>
-      <span className={cn("font-display font-extrabold", big ? "text-xl text-gold" : "text-sm text-foreground")}>
+      <span dir="ltr" className={cn("font-display font-extrabold", big ? "text-xl text-gold" : "text-sm text-foreground")}>
         +{checkinReward(day)}
       </span>
     </div>
@@ -70,7 +70,7 @@ export function CheckinCard({
         </div>
         <span className="flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/10 px-2.5 py-1 text-xs font-semibold text-destructive-foreground">
           <Flame className="size-3.5 text-accent" />
-          سلسلة {streakDays} أيام
+          {streakDays > 0 ? `سلسلة ${streakDays} ${streakDays > 2 && streakDays < 11 ? "أيام" : "يوم"}` : "ابدأ سلستك"}
         </span>
       </header>
 
@@ -98,7 +98,10 @@ export function CheckinCard({
           className="btn-cta mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl font-display text-base font-bold transition-transform active:scale-[0.98] disabled:opacity-70"
         >
           {claiming ? <Loader2 className="size-5 animate-spin" /> : null}
-          استلم +{checkinReward(state.nextDay)} {COIN.symbol}
+          استلم
+          <span dir="ltr">
+            +{checkinReward(state.nextDay)} {COIN.symbol}
+          </span>
         </button>
       ) : (
         <div className="mt-4 flex items-center justify-between rounded-2xl border border-dashed border-accent/30 bg-background/40 px-4 py-3">
