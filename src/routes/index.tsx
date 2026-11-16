@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { toast } from "sonner";
 
 import { StoryOnboarding } from "@/components/onboarding/StoryOnboarding";
 
@@ -18,5 +17,5 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return <StoryOnboarding onFinish={() => toast("الصفحة الرئيسية قادمة قريبًا")} />;
+  return <StoryOnboarding />;
 }

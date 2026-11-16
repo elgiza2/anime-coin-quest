@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react";
+import { Check, ChevronLeft, Loader2, Wallet } from "lucide-react";
+import { toast } from "sonner";
 
+import { getTonConnect, shortTonAddress } from "@/lib/ton-connect";
+import { StoryEffects } from "./StoryEffects";
 import { STORY_SLIDES } from "./story-slides";
 
 const SLIDE_MS = 6500;
 
-export function StoryOnboarding({ onFinish }: { onFinish?: () => void }) {
+export function StoryOnboarding({ onConnected }: { onConnected?: (address: string) => void }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [wallet, setWallet] = useState<string | null>(null);
+  const [connecting, setConnecting] = useState(false);
   const total = STORY_SLIDES.length;
   const isLast = index === total - 1;
   const slide = STORY_SLIDES[index] ?? STORY_SLIDES[0]!;
@@ -19,19 +24,53 @@ export function StoryOnboarding({ onFinish }: { onFinish?: () => void }) {
     });
   }, []);
 
-  const next = useCallback(() => {
-    setIndex((i) => Math.min(i + 1, total - 1));
-  }, [total]);
+  // Restore an existing wallet session and follow connect/disconnect events.
+  useEffect(() => {
+    let unsub: (() => void) | undefined;
+    let alive = true;
+    getTonConnect()
+      .then((ui) => {
+        if (!alive) return;
+        const sync = async (raw: string | undefined) => {
+          if (!alive) return;
+          setWallet(raw ? await shortTonAddress(raw) : null);
+          if (raw) onConnected?.(raw);
+        };
+        void sync(ui.account?.address);
+        unsub = ui.onStatusChange((w) => {
+          setConnecting(false);
+          void sync(w?.account.address);
+          if (w) toast.success("تم ربط محفظتك بنجاح");
+        });
+        ui.onModalStateChange((s) => {
+          if (s.status === "closed") setConnecting(false);
+        });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+      unsub?.();
+    };
+  }, [onConnected]);
+
+  const next = useCallback(() => setIndex((i) => Math.min(i + 1, total - 1)), [total]);
   const prev = useCallback(() => setIndex((i) => Math.max(i - 1, 0)), []);
 
-  const handleCta = () => {
-    if (isLast) onFinish?.();
-    else next();
+  const connectWallet = async () => {
+    if (wallet) return;
+    setConnecting(true);
+    try {
+      const ui = await getTonConnect();
+      await ui.openModal();
+    } catch {
+      setConnecting(false);
+      toast.error("تعذّر فتح نافذة المحفظة، حاول مرة أخرى");
+    }
   };
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-md overflow-hidden bg-background select-none">
-      {/* Artwork */}
+      {/* Artwork + live effects */}
       {STORY_SLIDES.map((s, i) => (
         <div
           key={s.image}
@@ -39,15 +78,17 @@ export function StoryOnboarding({ onFinish }: { onFinish?: () => void }) {
           className="absolute inset-0 transition-opacity duration-700 ease-out"
           style={{ opacity: i === index ? 1 : 0 }}
         >
-          <img
-            key={i === index ? `on-${index}` : "off"}
-            src={s.image}
-            alt=""
-            width={1088}
-            height={1920}
-            className={`h-full w-full object-cover object-top ${i === index ? "animate-kenburns" : ""}`}
-            draggable={false}
-          />
+          <div key={i === index ? `on-${index}` : "off"} className={`absolute inset-0 ${i === index ? "animate-kenburns" : ""}`}>
+            <img
+              src={s.image}
+              alt=""
+              width={1088}
+              height={1920}
+              className="h-full w-full object-cover object-top"
+              draggable={false}
+            />
+            {i === index && <StoryEffects effect={s.effect} />}
+          </div>
         </div>
       ))}
       <div className="story-fade pointer-events-none absolute inset-0" />
@@ -104,15 +145,46 @@ export function StoryOnboarding({ onFinish }: { onFinish?: () => void }) {
           >
             {slide.body}
           </p>
-          <button
-            type="button"
-            onClick={handleCta}
-            className="btn-cta animate-rise mt-5 flex h-14 w-full items-center justify-center gap-2 rounded-full font-display text-lg font-semibold transition-transform active:scale-[0.97]"
-            style={{ animationDelay: "240ms" }}
-          >
-            {isLast ? "ابدأ المغامرة" : "التالي"}
-            <ChevronLeft className="size-5" strokeWidth={2.5} />
-          </button>
+
+          {isLast ? (
+            <button
+              type="button"
+              onClick={connectWallet}
+              disabled={connecting}
+              className="btn-cta animate-rise mt-5 flex h-14 w-full items-center justify-center gap-2.5 rounded-full font-display text-lg font-semibold transition-transform active:scale-[0.97] disabled:opacity-80"
+              style={{ animationDelay: "240ms" }}
+            >
+              {wallet ? (
+                <>
+                  <Check className="size-5" strokeWidth={2.5} />
+                  <span>تم الربط</span>
+                  <span dir="ltr" className="font-sans text-sm font-medium opacity-70">
+                    {wallet}
+                  </span>
+                </>
+              ) : connecting ? (
+                <>
+                  <Loader2 className="size-5 animate-spin" />
+                  جارٍ فتح المحفظة…
+                </>
+              ) : (
+                <>
+                  <Wallet className="size-5" strokeWidth={2.2} />
+                  ربط المحفظة
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={next}
+              className="btn-cta animate-rise mt-5 flex h-14 w-full items-center justify-center gap-2 rounded-full font-display text-lg font-semibold transition-transform active:scale-[0.97]"
+              style={{ animationDelay: "240ms" }}
+            >
+              التالي
+              <ChevronLeft className="size-5" strokeWidth={2.5} />
+            </button>
+          )}
         </div>
       </section>
     </main>
