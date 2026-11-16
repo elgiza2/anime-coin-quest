@@ -4256,6 +4256,170 @@ export type Database = {
         }
         Relationships: []
       }
+      wall_checkins: {
+        Row: {
+          created_at: string
+          id: number
+          reward: number
+          streak_day: number
+          tg_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          reward: number
+          streak_day: number
+          tg_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          reward?: number
+          streak_day?: number
+          tg_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_checkins_tg_id_fkey"
+            columns: ["tg_id"]
+            isOneToOne: false
+            referencedRelation: "wall_users"
+            referencedColumns: ["tg_id"]
+          },
+        ]
+      }
+      wall_task_progress: {
+        Row: {
+          claims_count: number
+          last_claimed_at: string | null
+          started_at: string | null
+          task_id: string
+          tg_id: number
+        }
+        Insert: {
+          claims_count?: number
+          last_claimed_at?: string | null
+          started_at?: string | null
+          task_id: string
+          tg_id: number
+        }
+        Update: {
+          claims_count?: number
+          last_claimed_at?: string | null
+          started_at?: string | null
+          task_id?: string
+          tg_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_task_progress_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "wall_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wall_task_progress_tg_id_fkey"
+            columns: ["tg_id"]
+            isOneToOne: false
+            referencedRelation: "wall_users"
+            referencedColumns: ["tg_id"]
+          },
+        ]
+      }
+      wall_tasks: {
+        Row: {
+          active: boolean
+          category: string
+          chat_id: string | null
+          cooldown_hours: number | null
+          created_at: string
+          emoji: string
+          id: string
+          kind: string
+          required: number
+          reward: number
+          sort: number
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          chat_id?: string | null
+          cooldown_hours?: number | null
+          created_at?: string
+          emoji?: string
+          id?: string
+          kind?: string
+          required?: number
+          reward?: number
+          sort?: number
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          chat_id?: string | null
+          cooldown_hours?: number | null
+          created_at?: string
+          emoji?: string
+          id?: string
+          kind?: string
+          required?: number
+          reward?: number
+          sort?: number
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      wall_users: {
+        Row: {
+          balance: number
+          checkin_streak: number
+          created_at: string
+          first_name: string
+          last_checkin_at: string | null
+          last_seen_at: string
+          photo_url: string | null
+          referrer_id: number | null
+          tg_id: number
+          username: string | null
+          wallet_address: string | null
+        }
+        Insert: {
+          balance?: number
+          checkin_streak?: number
+          created_at?: string
+          first_name?: string
+          last_checkin_at?: string | null
+          last_seen_at?: string
+          photo_url?: string | null
+          referrer_id?: number | null
+          tg_id: number
+          username?: string | null
+          wallet_address?: string | null
+        }
+        Update: {
+          balance?: number
+          checkin_streak?: number
+          created_at?: string
+          first_name?: string
+          last_checkin_at?: string | null
+          last_seen_at?: string
+          photo_url?: string | null
+          referrer_id?: number | null
+          tg_id?: number
+          username?: string | null
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
       withdrawals: {
         Row: {
           address: string
@@ -4614,6 +4778,25 @@ export type Database = {
       }
       orange_withdraw_process: {
         Args: { _note: string; _status: string; _wid: string }
+        Returns: undefined
+      }
+      wall_claim_task: {
+        Args: { _task: string; _tg: number; _verified: boolean }
+        Returns: number
+      }
+      wall_daily_checkin: { Args: { _tg: number }; Returns: Json }
+      wall_start_task: {
+        Args: { _task: string; _tg: number }
+        Returns: undefined
+      }
+      wall_upsert_user: {
+        Args: {
+          _first: string
+          _photo: string
+          _ref: number
+          _tg: number
+          _username: string
+        }
         Returns: undefined
       }
     }
