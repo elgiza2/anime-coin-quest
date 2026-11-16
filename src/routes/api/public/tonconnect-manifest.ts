@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // Public manifest that TON wallets fetch before connecting. Built from the request
-// origin so it matches whichever domain (preview, published, custom) the app runs on.
+// origin so it matches whichever public domain (dev, published, custom) serves it.
 export const Route = createFileRoute("/api/public/tonconnect-manifest")({
   server: {
     handlers: {
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/api/public/tonconnect-manifest")({
           {
             url: origin,
             name: "منجم الأسوار",
-            iconUrl: `${origin}/wallet-icon.png`,
+            iconUrl: `${origin}/api/public/wallet-icon`,
           },
           {
             headers: {
