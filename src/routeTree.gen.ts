@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicTonconnectManifestRouteImport } from './routes/api/public/tonconnect-manifest'
+import { Route as ApiPublicWalletIconRouteImport } from './routes/api/public/wallet-icon'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,31 +24,44 @@ const ApiPublicTonconnectManifestRoute =
     path: '/api/public/tonconnect-manifest',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicWalletIconRoute = ApiPublicWalletIconRouteImport.update({
+  id: '/api/public/wallet-icon',
+  path: '/api/public/wallet-icon',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/public/tonconnect-manifest': typeof ApiPublicTonconnectManifestRoute
+  '/api/public/wallet-icon': typeof ApiPublicWalletIconRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/public/tonconnect-manifest': typeof ApiPublicTonconnectManifestRoute
+  '/api/public/wallet-icon': typeof ApiPublicWalletIconRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/public/tonconnect-manifest': typeof ApiPublicTonconnectManifestRoute
+  '/api/public/wallet-icon': typeof ApiPublicWalletIconRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/public/tonconnect-manifest'
+  fullPaths: '/' | '/api/public/tonconnect-manifest' | '/api/public/wallet-icon'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/tonconnect-manifest'
-  id: '__root__' | '/' | '/api/public/tonconnect-manifest'
+  to: '/' | '/api/public/tonconnect-manifest' | '/api/public/wallet-icon'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/public/tonconnect-manifest'
+    | '/api/public/wallet-icon'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiPublicTonconnectManifestRoute: typeof ApiPublicTonconnectManifestRoute
+  ApiPublicWalletIconRoute: typeof ApiPublicWalletIconRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -66,12 +80,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTonconnectManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/wallet-icon': {
+      id: '/api/public/wallet-icon'
+      path: '/api/public/wallet-icon'
+      fullPath: '/api/public/wallet-icon'
+      preLoaderRoute: typeof ApiPublicWalletIconRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiPublicTonconnectManifestRoute: ApiPublicTonconnectManifestRoute,
+  ApiPublicWalletIconRoute: ApiPublicWalletIconRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
