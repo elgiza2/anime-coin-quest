@@ -29,9 +29,9 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
     let h = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const resize = () => {
-      const r = canvas.getBoundingClientRect();
-      w = r.width;
-      h = r.height;
+      // Layout size (ignores the Ken Burns transform on the parent).
+      w = canvas.clientWidth;
+      h = canvas.clientHeight;
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
