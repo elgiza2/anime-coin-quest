@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- App is Arabic RTL (`dir="rtl"` on `<html>`); use logical directions (origin-right for RTL progress, ChevronLeft = forward). Why: every screen reads right-to-left.
+- Start page is a story onboarding in `src/components/onboarding/` with slide content in `story-slides.ts`; visual tokens (glass, story-fade, btn-cta, story animations) live in `src/styles.css`. Why: slides and copy change often without touching layout.
