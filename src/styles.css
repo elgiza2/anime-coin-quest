@@ -186,3 +186,39 @@
 #tc-widget-root {
   direction: ltr;
 }
+
+/* Story hype: titles slam in; the danger beat shakes and glows red */
+@keyframes story-slam {
+  0% { opacity: 0; transform: scale(1.35); filter: blur(6px); letter-spacing: 0.08em; }
+  60% { opacity: 1; transform: scale(0.97); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); letter-spacing: normal; }
+}
+@keyframes story-quake {
+  0%, 100% { transform: translate(0, 0); }
+  15% { transform: translate(-3px, 1px) rotate(-0.6deg); }
+  30% { transform: translate(3px, -1px) rotate(0.6deg); }
+  45% { transform: translate(-2px, 0); }
+  60% { transform: translate(2px, 1px); }
+  75% { transform: translate(-1px, 0); }
+}
+@keyframes story-alarm-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.6; }
+}
+@utility animate-slam {
+  animation: story-slam 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+@utility animate-quake {
+  animation: story-slam 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) both, story-quake 0.45s ease-in-out 0.7s 2;
+}
+@utility text-alarm {
+  color: var(--destructive-foreground);
+  text-shadow: 0 0 18px color-mix(in oklab, var(--destructive) 85%, transparent), 0 2px 0 color-mix(in oklab, var(--destructive) 60%, black);
+}
+@utility story-alarm-vignette {
+  background: radial-gradient(ellipse at center, transparent 45%, color-mix(in oklab, var(--destructive) 55%, transparent) 100%);
+  animation: story-alarm-pulse 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-slam, .animate-quake, .story-alarm-vignette { animation: none; }
+}

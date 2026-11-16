@@ -59,7 +59,8 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
     let flash = 0;
     let nextFlash = performance.now() + rand(1200, 2500);
     let bolt: { pts: [number, number][]; life: number } | null = null;
-    let nextBurst = performance.now() + 500;
+    // The mine clip animates its own pickaxe sparks, so canvas bursts stay off.
+    let nextBurst = Number.POSITIVE_INFINITY;
     let raf = 0;
     let last = performance.now();
 
