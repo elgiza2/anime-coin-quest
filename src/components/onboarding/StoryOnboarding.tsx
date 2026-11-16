@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, ChevronLeft, Loader2, Wallet } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "@tanstack/react-router";
 
 import { getTonConnect, shortTonAddress } from "@/lib/ton-connect";
 import { StoryEffects } from "./StoryEffects";
@@ -192,7 +193,23 @@ export function StoryOnboarding({ onConnected }: { onConnected?: (address: strin
             {slide.body}
           </p>
 
-          {isLast ? (
+          {isLast && wallet ? (
+            <div className="animate-rise mt-5" style={{ animationDelay: "240ms" }}>
+              <p className="mb-2 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                <Check className="size-3.5 text-accent" strokeWidth={3} />
+                تم ربط المحفظة
+                <span dir="ltr" className="font-medium text-foreground">{wallet}</span>
+              </p>
+              <Link
+                to="/tasks"
+                search={{}}
+                className="btn-cta flex h-14 w-full items-center justify-center gap-2 rounded-full font-display text-lg font-semibold transition-transform active:scale-[0.97]"
+              >
+                ابدأ المهام
+                <ChevronLeft className="size-5" strokeWidth={2.5} />
+              </Link>
+            </div>
+          ) : isLast ? (
             <button
               type="button"
               onClick={connectWallet}
@@ -200,15 +217,7 @@ export function StoryOnboarding({ onConnected }: { onConnected?: (address: strin
               className="btn-cta animate-rise mt-5 flex h-14 w-full items-center justify-center gap-2.5 rounded-full font-display text-lg font-semibold transition-transform active:scale-[0.97] disabled:opacity-80"
               style={{ animationDelay: "240ms" }}
             >
-              {wallet ? (
-                <>
-                  <Check className="size-5" strokeWidth={2.5} />
-                  <span>تم الربط</span>
-                  <span dir="ltr" className="font-sans text-sm font-medium opacity-70">
-                    {wallet}
-                  </span>
-                </>
-              ) : connecting ? (
+              {connecting ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
                   جارٍ فتح المحفظة…
