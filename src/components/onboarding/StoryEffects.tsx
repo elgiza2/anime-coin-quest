@@ -8,12 +8,18 @@ import type { StoryEffect } from "./story-slides";
  *  - sparks: pickaxe impact bursts, floating dust, flickering lanterns
  *  - rain:   slanted rain, ground mist and lightning flashes
  *  - dawn:   rotating sun rays and rising gold motes
- * Positions are fractions of the canvas so they track the cover-fitted image.
+ * Anchor points are given in image space (0..1 of the artwork) and mapped through
+ * the same cover/top-center fit as the <img>, so they stay on the pickaxe, lanterns
+ * and sun at any screen size.
  */
 
 type P = { x: number; y: number; vx: number; vy: number; life: number; max: number; size: number; hue: number };
 
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+// Slide artwork is 1088x1920, drawn with object-fit: cover + object-position: top center.
+const IMG_W = 1088;
+const IMG_H = 1920;
 
 export function StoryEffects({ effect }: { effect: StoryEffect }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -36,6 +42,14 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
+    // Map an image-space point (0..1) to canvas pixels.
+    const toCanvas = (ix: number, iy: number): [number, number] => {
+      const scale = Math.max(w / IMG_W, h / IMG_H);
+      const dw = IMG_W * scale;
+      return [(w - dw) / 2 + ix * dw, iy * IMG_H * scale];
+    };
+    const imgScale = () => Math.max(w / IMG_W, h / IMG_H) * IMG_W;
+
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
@@ -103,8 +117,9 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
 
     function burst() {
       // Pickaxe impact point on the mine artwork
-      const ox = 0.89;
-      const oy = 0.47;
+      const [px, py] = toCanvas(0.88, 0.47);
+      const ox = px / w;
+      const oy = py / h;
       for (let i = 0; i < 34; i++) {
         const a = rand(Math.PI * 0.55, Math.PI * 1.35);
         const s = rand(0.15, 0.55);
@@ -194,8 +209,7 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
 
       if (effect === "dawn") {
         // rotating god rays from the sun
-        const sx = w * 0.83;
-        const sy = h * 0.17;
+        const [sx, sy] = toCanvas(0.83, 0.17);
         const rot = now / 9000;
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
@@ -214,7 +228,7 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
           ctx.fill();
         }
         const pulse = 0.25 + 0.08 * Math.sin(now / 900);
-        const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, w * 0.35);
+        const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, imgScale() * 0.35);
         glow.addColorStop(0, `rgba(255,225,160,${pulse})`);
         glow.addColorStop(1, "rgba(255,225,160,0)");
         ctx.fillStyle = glow;
@@ -236,7 +250,8 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
           [0.73, 0.29, 0.14],
         ] as const) {
           const f = 0.16 + 0.07 * Math.sin(now / 90 + lx * 40) + rand(-0.03, 0.03);
-          const grd = ctx.createRadialGradient(lx * w, ly * h, 0, lx * w, ly * h, r * w);
+          const [cx, cy] = toCanvas(lx, ly);
+          const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * imgScale());
           grd.addColorStop(0, `rgba(255,170,70,${f})`);
           grd.addColorStop(1, "rgba(255,170,70,0)");
           ctx.fillStyle = grd;
@@ -244,7 +259,8 @@ export function StoryEffects({ effect }: { effect: StoryEffect }) {
         }
         // gold vein glow
         const vein = 0.1 + 0.08 * Math.max(0, flash);
-        const vg = ctx.createRadialGradient(0.89 * w, 0.47 * h, 0, 0.89 * w, 0.47 * h, 0.35 * w);
+        const [vx, vy] = toCanvas(0.88, 0.47);
+        const vg = ctx.createRadialGradient(vx, vy, 0, vx, vy, 0.35 * imgScale());
         vg.addColorStop(0, `rgba(255,200,80,${vein + 0.12})`);
         vg.addColorStop(1, "rgba(255,200,80,0)");
         ctx.fillStyle = vg;
