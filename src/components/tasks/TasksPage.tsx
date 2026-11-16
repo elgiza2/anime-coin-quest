@@ -218,7 +218,7 @@ export function TasksPage({ category }: { category: CategoryFilter }) {
                     "flex h-11 items-center gap-2 rounded-full border pe-4 ps-2 text-sm font-semibold transition-colors",
                     active
                       ? "border-transparent btn-cta"
-                      : "glass border-glass-border text-muted-foreground",
+                      : "glass text-muted-foreground",
                   )}
                 >
                   <span className={cn("grid size-7 place-items-center rounded-full", active ? "bg-primary-foreground/10" : "bg-background/40")}>
