@@ -222,3 +222,62 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-slam, .animate-quake, .story-alarm-vignette { animation: none; }
 }
+
+/* ---------- Tasks page ---------- */
+:root {
+  --gradient-gold: linear-gradient(180deg, oklch(0.95 0.08 90), oklch(0.76 0.14 72));
+  --gradient-bar: linear-gradient(270deg, oklch(0.86 0.13 85), oklch(0.72 0.15 62));
+  --card-surface: linear-gradient(180deg, oklch(0.25 0.012 70 / 0.78), oklch(0.18 0.008 70 / 0.86));
+  --tile-onchain: linear-gradient(160deg, oklch(0.52 0.09 240), oklch(0.32 0.06 245));
+  --tile-game: linear-gradient(160deg, oklch(0.5 0.07 125), oklch(0.3 0.05 130));
+  --tile-social: linear-gradient(160deg, oklch(0.56 0.08 55), oklch(0.34 0.06 45));
+  --tile-partners: linear-gradient(160deg, oklch(0.55 0.13 32), oklch(0.33 0.09 28));
+  --tile-gold: linear-gradient(160deg, oklch(0.8 0.13 80), oklch(0.58 0.12 62));
+  --success: oklch(0.72 0.14 150);
+  --hero-fade: linear-gradient(to bottom, oklch(0.14 0.006 70 / 0.2) 0%, oklch(0.14 0.006 70 / 0.35) 45%, var(--background) 100%);
+}
+@theme inline {
+  --color-success: var(--success);
+}
+@utility text-gold {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility bg-gold-bar {
+  background: var(--gradient-bar);
+}
+@utility glass-card {
+  background: var(--card-surface);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+@utility hero-fade {
+  background: var(--hero-fade);
+}
+@utility emoji-tile {
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.25), 0 8px 18px -8px oklch(0 0 0 / 0.7);
+}
+@utility tile-onchain { background: var(--tile-onchain); }
+@utility tile-game { background: var(--tile-game); }
+@utility tile-social { background: var(--tile-social); }
+@utility tile-partners { background: var(--tile-partners); }
+@utility tile-gold { background: var(--tile-gold); }
+
+@keyframes lantern-flicker {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  40% { opacity: 0.8; transform: scale(1.06); }
+  60% { opacity: 0.6; transform: scale(0.98); }
+}
+@utility animate-lantern {
+  animation: lantern-flicker 3.2s ease-in-out infinite;
+}
+@utility lantern-glow {
+  background: radial-gradient(circle, oklch(0.82 0.14 75 / 0.55), transparent 65%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-lantern { animation: none; }
+}
