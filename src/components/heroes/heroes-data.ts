@@ -1,17 +1,14 @@
-import wallImg from "@/assets/onboarding/v3-1-wall.jpg";
-import mineImg from "@/assets/onboarding/v3-2-mine.jpg";
-import stormImg from "@/assets/onboarding/v3-3-storm.jpg";
-import dawnImg from "@/assets/onboarding/v3-4-dawn.jpg";
-import wallVid from "@/assets/onboarding/story-wall.mp4.asset.json";
-import mineVid from "@/assets/onboarding/story-mine.mp4.asset.json";
-import stormVid from "@/assets/onboarding/story-storm.mp4.asset.json";
-import dawnVid from "@/assets/onboarding/story-dawn.mp4.asset.json";
+import rage from "@/assets/heroes/hero-1-rage.jpg";
+import mind from "@/assets/heroes/hero-2-mind.jpg";
+import blade from "@/assets/heroes/hero-3-blade.jpg";
+import commander from "@/assets/heroes/hero-4-commander.jpg";
+import guardian from "@/assets/onboarding/v3-1-wall.jpg";
 
-// Placeholder art reuses the story clips until each hero gets their own video.
+// Index = hero id in the DB (wall_hero_levels.hero). Still art only, animated with CSS.
 export const HEROES = [
-  { name: "نايرا", title: "حارسة السور", image: wallImg, video: wallVid.url },
-  { name: "كايتو", title: "عامل المنجم", image: mineImg, video: mineVid.url },
-  { name: "ريفن", title: "صائدة العاصفة", image: stormImg, video: stormVid.url },
-  { name: "دارين", title: "قائد الفجر", image: dawnImg, video: dawnVid.url },
-  { name: "الأسطورة", title: "ملك الأسوار", image: dawnImg, video: wallVid.url },
+  { name: "كايل", title: "الفتى الغاضب", image: rage },
+  { name: "نايرا", title: "حارسة السور", image: guardian },
+  { name: "آرين", title: "العقل المدبّر", image: mind },
+  { name: "ليوك", title: "أقوى جندي", image: blade },
+  { name: "إروين", title: "القائد الأعلى", image: commander },
 ] as const;
