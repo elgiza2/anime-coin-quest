@@ -311,3 +311,10 @@
 }
 @utility wallet-surface { background: var(--wallet-surface); border: 1px solid var(--glass-highlight); box-shadow: var(--shadow-glass); }
 @utility wallet-shade { background: var(--wallet-shade); }
+
+:root {
+  --profile-shade: linear-gradient(to bottom, oklch(0.14 0.006 70 / 0.12), oklch(0.14 0.006 70 / 0.35) 30%, var(--background) 100%);
+  --profile-recruit: linear-gradient(135deg, oklch(0.31 0.04 160 / 0.9), oklch(0.22 0.022 200 / 0.94));
+}
+@utility profile-shade { background: var(--profile-shade); }
+@utility profile-recruit { background: var(--profile-recruit); border: 1px solid var(--glass-highlight); box-shadow: var(--shadow-glass); }

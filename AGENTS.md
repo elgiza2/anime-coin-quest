@@ -45,3 +45,4 @@ use the editor.
 - Battle segments use two video decoders and seek only the hidden one before a crossfade. Why: avoid visible jumps, mirror flips and blank frames during playback.
 - Wallet uses existing Telegram-verified player/hero reads and TON Connect; do not imply an on-chain game-token balance, withdrawals or NFTs exist. Why: those services are not implemented.
 - Portable source exports must include downloaded CDN assets with local pointer URLs, migrations and setup notes, excluding secrets, user data, Git metadata, dependencies and build output. Why: another developer can continue without relying on Lovable media hosting.
+- Profile reads use the existing Telegram verification, return only the caller's identity and paginated direct referrals, and reuse hero standings; referral rewards remain task claims. Why: preserves player privacy and avoids inventing a separate economy.
