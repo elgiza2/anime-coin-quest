@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Profile page: Telegram identity, progression, own referral team, leaderboard and replay settings
+
 - [x] Remove battle counter and crossfade video segments without visible seeks
 - [x] Wallet page based on references, with real balance and TON connection; authenticated reads/payment confirmation require Telegram launch to verify
 - [x] Portable source ZIP including all images, videos and emoji, without secrets
