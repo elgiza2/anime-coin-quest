@@ -33,7 +33,7 @@ export function ProfilePage() {
   const link = p ? referralLink(p.tg_id) : "";
   const guest = () => toast("افتح اللعبة من تيليجرام لعرض ملفك ودعوة أصدقائك");
   async function copy() {
-    if (!link) return guest();
+    if (!link) { guest(); return; }
     try { await navigator.clipboard.writeText(link); toast.success("تم نسخ رابط دعوتك"); }
     catch { toast.error("تعذّر نسخ الرابط"); }
   }
