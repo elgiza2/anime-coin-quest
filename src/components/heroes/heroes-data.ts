@@ -10,5 +10,5 @@ export const HEROES = [
   { name: "نايرا", title: "حارسة السور", image: guardian },
   { name: "آرين", title: "العقل المدبّر", image: mind },
   { name: "ليوك", title: "أقوى جندي", image: blade },
-  { name: "إروين", title: "القائد الأعلى", image: commander },
+  { name: "إيفان", title: "القائد الأعلى", image: commander },
 ] as const;
