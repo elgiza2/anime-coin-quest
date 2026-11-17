@@ -3,10 +3,12 @@ import { z } from "zod";
 
 import { HERO_COUNT } from "./heroes-model";
 import { authPlayer } from "./tasks.functions";
+import type { MinePass } from "./mine-pass-model";
 
 const authInput = z.object({ initData: z.string().min(10).max(4096) });
 
 export type HeroBoard = {
+  minePass: MinePass | null;
   balance: number;
   minedAt: number;
   levels: number[];
@@ -19,17 +21,20 @@ export const getHeroBoard = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<HeroBoard> => {
     const { user, db } = await authPlayer(data.initData);
     await db.rpc("wall_ensure_heroes", { _tg: user.id } as never);
-    const [u, h, top] = await Promise.all([
+    const [u, h, top, pass] = await Promise.all([
       db.from("wall_users").select("balance, mined_at, total_level").eq("tg_id", user.id).single(),
       db.from("wall_hero_levels").select("hero, level").eq("tg_id", user.id),
       db.from("wall_users").select("tg_id, first_name, username, photo_url, total_level").order("total_level", { ascending: false }).limit(20),
+      db.from("wall_mine_passes").select("pass_number, created_at").eq("tg_id", user.id).maybeSingle(),
     ]);
     if (u.error) throw new Error(u.error.message);
+    if (pass.error) throw new Error(pass.error.message);
     const total = Number(u.data.total_level);
     const above = await db.from("wall_users").select("tg_id", { count: "exact", head: true }).gt("total_level", total);
     const levels = Array.from({ length: HERO_COUNT }, () => 0);
     for (const r of h.data ?? []) levels[r.hero] = r.level;
     return {
+      minePass: pass.data ? { number: pass.data.pass_number, activatedAt: pass.data.created_at } : null,
       balance: Number(u.data.balance),
       minedAt: new Date(u.data.mined_at).getTime(),
       levels,

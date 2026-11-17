@@ -24,7 +24,8 @@ export function totalRate(levels: number[]): number {
 }
 
 /** Coins waiting in storage; mining stops once storage is full. */
-export function pendingCoins(rate: number, minedAt: number, now: number): number {
+export function pendingCoins(rate: number, minedAt: number, now: number, miningEnabled = true): number {
+  if (!miningEnabled) return 0;
   const hrs = Math.min(STORAGE_HOURS, Math.max(0, (now - minedAt) / 3_600_000));
   return Math.round(rate * hrs * 100) / 100;
 }
@@ -39,7 +40,8 @@ export function upgradeErrorMessage(e: unknown): string {
 
 /** Battle arena: one titan falls every minute of mining (until storage is full). */
 export const TITAN_EVERY_MS = 60_000;
-export function titansSlain(minedAt: number, now: number): number {
+export function titansSlain(minedAt: number, now: number, miningEnabled = true): number {
+  if (!miningEnabled) return 0;
   const ms = Math.min(STORAGE_HOURS * 3_600_000, Math.max(0, now - minedAt));
   return Math.floor(ms / TITAN_EVERY_MS);
 }

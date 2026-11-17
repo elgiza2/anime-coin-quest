@@ -14,6 +14,7 @@ import { getMyBoard, saveWallet } from "@/lib/tasks.functions";
 import { getInitData } from "@/lib/telegram";
 import { getTonConnect, shortTonAddress } from "@/lib/ton-connect";
 import vaultImage from "@/assets/onboarding/v3-2-mine.jpg";
+import { MinePassCard } from "@/components/profile/MinePassCard";
 
 export function WalletPage() {
   const [initData, setInitData] = useState("");
@@ -75,7 +76,7 @@ export function WalletPage() {
 
   const b = board.data;
   const rate = b ? totalRate(b.levels) : 0;
-  const pending = b ? pendingCoins(rate, b.minedAt, now) : 0;
+  const pending = b ? pendingCoins(rate, b.minedAt, now, !!b.minePass) : 0;
   const total = b?.levels.reduce((sum, level) => sum + level, 0) ?? 0;
   const balance = b?.balance;
   const loading = !!initData && (board.isPending || player.isPending);
@@ -118,6 +119,8 @@ export function WalletPage() {
           {address ? <Button variant="outline" size="icon" title="فصل المحفظة" aria-label="فصل المحفظة" onClick={disconnect}>↪</Button> : <Button onClick={connect} disabled={connecting} className="btn-cta rounded-xl">{connecting ? "…" : "ربط المحفظة"}</Button>}
         </div>
       </section>
+
+      <div className="mt-6"><MinePassCard initData={initData} /></div>
 
       <section className="mt-6">
         <h2 className="mb-3 text-xl font-extrabold">شراء العملات</h2>
