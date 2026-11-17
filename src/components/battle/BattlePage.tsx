@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Clock, Lock, Swords, Zap } from "lucide-react";
+import { Clock, Lock, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 import { BottomNav } from "@/components/BottomNav";
+import { Button } from "@/components/ui/button";
 import { AnimatedEmoji } from "@/components/emoji/AnimatedEmoji";
 import { useNow } from "@/components/tasks/use-now";
 import { HEROES } from "@/components/heroes/heroes-data";
@@ -44,7 +45,8 @@ export function BattlePage() {
 
   const mine = levels.reduce((m, _, i) => (isUnlocked(i, levels) ? i : m), 0);
   const h = pick ?? mine;
-  const hero = HEROES[h]!;
+  const hero = HEROES[h] ?? HEROES[0];
+  if (!hero) return null;
   const clip = hero.battle ?? hero.video;
 
   // A "+coins" pop every time a new titan falls.
@@ -75,7 +77,7 @@ export function BattlePage() {
     <main className="relative mx-auto h-dvh max-w-md overflow-hidden">
       {/* Battle footage */}
       {clip ? (
-        <SegmentVideo src={clip} poster={hero.image} className="absolute inset-0 size-full object-cover" />
+        <SegmentVideo key={clip} src={clip} poster={hero.image} className="absolute inset-0 size-full" />
       ) : (
         <img src={hero.image} alt={hero.name} className="absolute inset-0 size-full object-cover" />
       )}
@@ -88,8 +90,8 @@ export function BattlePage() {
             <p className="text-xs text-muted-foreground">غنايم المعركة</p>
             <p className="text-gold text-3xl font-extrabold tabular-nums">{formatAmount(pending)} <span className="text-sm">{COIN.symbol}</span></p>
           </div>
-          <button type="button" disabled={guest || collect.isPending || pending <= 0} onClick={() => collect.mutate()}
-            className="btn-cta shrink-0 rounded-2xl px-6 py-3 text-lg font-extrabold disabled:opacity-50">استلام</button>
+          <Button type="button" disabled={guest || collect.isPending || pending <= 0} onClick={() => collect.mutate()}
+            className="btn-cta h-auto shrink-0 rounded-2xl px-6 py-3 text-lg font-extrabold disabled:opacity-50">استلام</Button>
         </div>
         <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1"><Zap className="size-3.5" />{formatAmount(rate)}/س</span>
@@ -100,13 +102,8 @@ export function BattlePage() {
         </div>
       </header>
 
-      {/* Kill counter + pops */}
+      {/* Coin rewards remain visible without covering the battle with a counter. */}
       <div className="absolute inset-x-0 top-[38%] z-10 flex flex-col items-center">
-        <div className="glass flex items-center gap-2 rounded-full px-4 py-2">
-          <Swords className="size-4 text-gold" />
-          <span className="text-sm font-bold">{kills} عملاق سقط</span>
-          <span className="text-xs text-muted-foreground">· {formatAmount(coinsPerTitan(rate))} لكل عملاق</span>
-        </div>
         {pops.map((id) => (
           <span key={id} className="animate-coin-pop text-gold absolute top-12 text-2xl font-extrabold">+{formatAmount(coinsPerTitan(rate))}</span>
         ))}
@@ -115,19 +112,19 @@ export function BattlePage() {
 
       {/* Hero switcher + ad boost */}
       <section className="absolute inset-x-3 bottom-24 z-10 space-y-2">
-        <button type="button" disabled={guest || ad.isPending} onClick={() => ad.mutate()}
-          className="glass flex w-full items-center justify-center gap-2 rounded-2xl py-2.5 text-sm font-bold disabled:opacity-50">
+        <Button variant="ghost" type="button" disabled={guest || ad.isPending} onClick={() => ad.mutate()}
+          className="glass h-auto w-full rounded-2xl py-2.5 text-sm font-bold disabled:opacity-50">
           <AnimatedEmoji name="rocket" className="size-5 text-accent" /> اتفرج على إعلان واكسب +{formatAmount(adReward(rate))}
-        </button>
+        </Button>
         <div className="glass flex justify-between rounded-[22px] p-2">
           {HEROES.map((x, i) => {
             const open = isUnlocked(i, levels);
             return (
-              <button key={x.name} type="button" disabled={!open} onClick={() => setPick(i)} aria-label={x.name}
-                className={cn("relative size-14 overflow-hidden rounded-2xl ring-2", i === h ? "ring-accent" : "ring-transparent")}>
+              <Button variant="ghost" key={x.name} type="button" disabled={!open} onClick={() => setPick(i)} aria-label={x.name}
+                className={cn("relative size-14 overflow-hidden rounded-2xl p-0 ring-2", i === h ? "ring-accent" : "ring-transparent")}>
                 <img src={x.image} alt="" className={cn("size-full object-cover object-top", !open && "grayscale brightness-50")} />
                 {!open && <Lock className="absolute inset-0 m-auto size-4" />}
-              </button>
+              </Button>
             );
           })}
         </div>
