@@ -113,7 +113,7 @@ export function HeroesPage() {
       </section>
 
       <Link to="/tasks" className="glass mt-4 flex items-center gap-3 rounded-3xl p-4">
-        <AnimatedEmoji name="rocket" size={32} />
+        <AnimatedEmoji name="rocket" className="size-8 text-foreground" />
         <div className="flex-1"><p className="font-semibold">عايز عملات أكتر؟</p><p className="text-xs text-muted-foreground">أكمل المهام وادعي أصحابك</p></div>
         <ChevronLeft />
       </Link>
