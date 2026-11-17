@@ -1,5 +1,10 @@
 # Roadmap
 
+- [ ] Remove battle counter and crossfade video segments without visible seeks
+- [ ] Wallet page based on references, with real balance and TON connection
+- [ ] Portable source ZIP including all images, videos and emoji, without secrets
+- [ ] GitHub repository link — requires owner to connect Git sync in Project settings
+
 - [x] Start page (story onboarding, animated slides, wallet button on last slide)
 - [x] Fix wallet connect button (wallets couldn't read the app info behind the preview login)
 - [x] Tasks page (/tasks): daily check-in streak, category chips, task cards, real data, garrison background, animated emoji from "The Open Emoji" pack
