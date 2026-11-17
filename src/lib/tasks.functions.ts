@@ -35,7 +35,7 @@ async function admin() {
 }
 
 /** Verifies the Telegram session and makes sure the player row exists. */
-async function authPlayer(initData: string) {
+export async function authPlayer(initData: string) {
   const { user, startParam } = await verifyInitData(initData, botToken());
   const ref = startParam?.match(/^ref_(\d+)$/)?.[1];
   const db = await admin();
