@@ -6,13 +6,6 @@ import { COIN, formatAmount } from "@/lib/coin";
 import { formatCountdown, type TaskDTO, type TaskState } from "@/lib/tasks-model";
 import { cn } from "@/lib/utils";
 
-const TILE: Record<TaskDTO["category"], string> = {
-  onchain: "tile-onchain",
-  game: "tile-game",
-  social: "tile-social",
-  partners: "tile-partners",
-};
-
 function actionLabel(task: TaskDTO, state: TaskState): string {
   if (state.type === "verify") return "تحقق";
   if (state.type === "ready") return "استلم";

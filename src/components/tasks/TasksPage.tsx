@@ -130,7 +130,6 @@ export function TasksPage({ category }: { category: CategoryFilter }) {
   }, [tasks, progress, player, now]);
 
   const available = rows.filter((r) => isAvailable(r.state));
-  const toEarn = available.reduce((s, r) => s + r.task.reward, 0);
   const shown = category === "all" ? rows : rows.filter((r) => r.task.category === category);
 
   const act = async (task: TaskDTO) => {
