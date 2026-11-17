@@ -1,8 +1,8 @@
 # Roadmap
 
-- [ ] Remove battle counter and crossfade video segments without visible seeks
-- [ ] Wallet page based on references, with real balance and TON connection
-- [ ] Portable source ZIP including all images, videos and emoji, without secrets
+- [x] Remove battle counter and crossfade video segments without visible seeks
+- [x] Wallet page based on references, with real balance and TON connection; authenticated reads/payment confirmation require Telegram launch to verify
+- [x] Portable source ZIP including all images, videos and emoji, without secrets
 - [ ] GitHub repository link — requires owner to connect Git sync in Project settings
 
 - [x] Start page (story onboarding, animated slides, wallet button on last slide)
@@ -13,6 +13,6 @@
 - [x] TON-only payments: buy coin packs with TON, verified on-chain
 - [x] Monetag rewarded ads (zone 12281067): watch ad for coins
 - [ ] Rename coin once the owner sends the real name (one place: coin setting)
-- [ ] Videos for heroes 3-5 (آرين، ليوك، إيفان) — blocked: workspace out of AI credits
+- [x] Videos for heroes 3-5 (آرين، ليوك، إيفان)
 - [ ] Later (on hold): VIP; more bottom-nav pages
 - [ ] Watch-ad tasks on the Tasks page (Monetag)
