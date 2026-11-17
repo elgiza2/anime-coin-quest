@@ -41,3 +41,4 @@ use the editor.
 - Icons are animated Lottie emoji from Telegram's "The Open Emoji" pack, stored as asset JSON and registered in `src/components/emoji/emoji-registry.ts`; `AnimatedEmoji` tints them from CSS `color`. Why: owner wants this pack instead of icon fonts; the pack is monochrome repaintable.
 - The coin name/symbol lives only in `src/lib/coin.ts`. Why: the final name is not decided yet.
 - Hero economy (5 heroes x 200 levels, storage cap, costs) lives in src/lib/heroes-model.ts (tested) and is mirrored by wall_hero_rate/wall_hero_cost/wall_upgrade_hero in the DB; change both together. Why: UI predicts what the DB enforces.
+- TON payments: server creates a wall_payments row, wallet sends to the treasury with comment wall:<id> (BOC built by commentPayload in src/lib/shop-model.ts, no Buffer), server verifies on toncenter and credits via wall_confirm_payment. Why: credits only after on-chain proof, once.
