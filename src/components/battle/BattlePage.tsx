@@ -53,7 +53,7 @@ export function BattlePage() {
     if (last.current !== null && kills > last.current) {
       const id = Date.now();
       setPops((p) => [...p.slice(-3), id]);
-      haptic("light");
+      haptic("success");
       setTimeout(() => setPops((p) => p.filter((x) => x !== id)), 1600);
     }
     last.current = kills;

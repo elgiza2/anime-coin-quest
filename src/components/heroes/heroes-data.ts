@@ -10,15 +10,18 @@ import bladeVid from "@/assets/heroes/hero-3-blade.mp4.asset.json";
 import commanderVid from "@/assets/heroes/hero-4-commander.mp4.asset.json";
 import b0 from "@/assets/battle/battle-1-rage.mp4.asset.json";
 import b1 from "@/assets/battle/battle-2-guardian.mp4.asset.json";
+import b2 from "@/assets/battle/battle-3-mind.mp4.asset.json";
+import b3 from "@/assets/battle/battle-4-blade.mp4.asset.json";
+import b4 from "@/assets/battle/battle-5-commander.mp4.asset.json";
 
 // Index = hero id in the DB (wall_hero_levels.hero). Video loops muted with the still as poster.
 export type Hero = { name: string; title: string; image: string; video?: string; battle?: string };
 export const HEROES: Hero[] = [
   { name: "كايل", title: "الفتى الغاضب", image: rage, video: rageVid.url, battle: b0.url },
   { name: "نايرا", title: "حارسة السور", image: guardian, video: guardianVid.url, battle: b1.url },
-  { name: "آرين", title: "العقل المدبّر", image: mind, video: mindVid.url },
-  { name: "ليوك", title: "أقوى جندي", image: blade, video: bladeVid.url },
-  { name: "إيفان", title: "القائد الأعلى", image: commander, video: commanderVid.url },
+  { name: "آرين", title: "العقل المدبّر", image: mind, video: mindVid.url, battle: b2.url },
+  { name: "ليوك", title: "أقوى جندي", image: blade, video: bladeVid.url, battle: b3.url },
+  { name: "إيفان", title: "القائد الأعلى", image: commander, video: commanderVid.url, battle: b4.url },
 ];
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
