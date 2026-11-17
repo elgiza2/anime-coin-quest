@@ -4346,6 +4346,42 @@ export type Database = {
           },
         ]
       }
+      wall_mine_passes: {
+        Row: {
+          created_at: string
+          pass_number: number
+          payment_id: string
+          tg_id: number
+        }
+        Insert: {
+          created_at?: string
+          pass_number?: never
+          payment_id: string
+          tg_id: number
+        }
+        Update: {
+          created_at?: string
+          pass_number?: never
+          payment_id?: string
+          tg_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_mine_passes_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "wall_payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wall_mine_passes_tg_id_fkey"
+            columns: ["tg_id"]
+            isOneToOne: true
+            referencedRelation: "wall_users"
+            referencedColumns: ["tg_id"]
+          },
+        ]
+      }
       wall_payments: {
         Row: {
           amount_nano: number
