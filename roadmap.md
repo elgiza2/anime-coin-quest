@@ -8,5 +8,6 @@
 - [x] TON-only payments: buy coin packs with TON, verified on-chain
 - [x] Monetag rewarded ads (zone 12281067): watch ad for coins
 - [ ] Rename coin once the owner sends the real name (one place: coin setting)
-- [ ] Later (on hold): shop, VIP, bottom navigation
+- [ ] Videos for heroes 3-5 (آرين، ليوك، إيفان) — blocked: workspace out of AI credits
+- [ ] Later (on hold): VIP; more bottom-nav pages
 - [ ] Watch-ad tasks on the Tasks page (Monetag)
