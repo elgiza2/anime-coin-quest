@@ -281,3 +281,11 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-lantern { animation: none; }
 }
+
+@keyframes hero-breathe {
+  0%, 100% { transform: scale(1.02) translateY(0); }
+  50% { transform: scale(1.07) translateY(-1.5%); }
+}
+@utility animate-breathe {
+  animation: hero-breathe 9s ease-in-out infinite;
+}
