@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Mandatory Mine Pass: 0.05 TON, confirmed payment, unique number, verification badge and mining gate
+
 - [x] Profile page: Telegram identity, progression, own paginated referral team, leaderboard and story replay; live identity reads require Telegram launch to verify
 
 - [x] Remove battle counter and crossfade video segments without visible seeks
