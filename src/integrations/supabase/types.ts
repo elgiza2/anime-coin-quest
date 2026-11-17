@@ -4288,6 +4288,35 @@ export type Database = {
           },
         ]
       }
+      wall_hero_levels: {
+        Row: {
+          hero: number
+          level: number
+          tg_id: number
+          updated_at: string
+        }
+        Insert: {
+          hero: number
+          level?: number
+          tg_id: number
+          updated_at?: string
+        }
+        Update: {
+          hero?: number
+          level?: number
+          tg_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_hero_levels_tg_id_fkey"
+            columns: ["tg_id"]
+            isOneToOne: false
+            referencedRelation: "wall_users"
+            referencedColumns: ["tg_id"]
+          },
+        ]
+      }
       wall_task_progress: {
         Row: {
           claims_count: number
@@ -4386,9 +4415,11 @@ export type Database = {
           first_name: string
           last_checkin_at: string | null
           last_seen_at: string
+          mined_at: string
           photo_url: string | null
           referrer_id: number | null
           tg_id: number
+          total_level: number
           username: string | null
           wallet_address: string | null
         }
@@ -4399,9 +4430,11 @@ export type Database = {
           first_name?: string
           last_checkin_at?: string | null
           last_seen_at?: string
+          mined_at?: string
           photo_url?: string | null
           referrer_id?: number | null
           tg_id: number
+          total_level?: number
           username?: string | null
           wallet_address?: string | null
         }
@@ -4412,9 +4445,11 @@ export type Database = {
           first_name?: string
           last_checkin_at?: string | null
           last_seen_at?: string
+          mined_at?: string
           photo_url?: string | null
           referrer_id?: number | null
           tg_id?: number
+          total_level?: number
           username?: string | null
           wallet_address?: string | null
         }
@@ -4785,9 +4820,24 @@ export type Database = {
         Returns: number
       }
       wall_daily_checkin: { Args: { _tg: number }; Returns: Json }
+      wall_ensure_heroes: { Args: { _tg: number }; Returns: undefined }
+      wall_hero_cost: {
+        Args: { _hero: number; _level: number }
+        Returns: number
+      }
+      wall_hero_rate: {
+        Args: { _hero: number; _level: number }
+        Returns: number
+      }
+      wall_mining_claim: { Args: { _tg: number }; Returns: number }
+      wall_mining_rate: { Args: { _tg: number }; Returns: number }
       wall_start_task: {
         Args: { _task: string; _tg: number }
         Returns: undefined
+      }
+      wall_upgrade_hero: {
+        Args: { _hero: number; _tg: number }
+        Returns: number
       }
       wall_upsert_user: {
         Args: {
