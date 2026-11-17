@@ -36,3 +36,14 @@ export function upgradeErrorMessage(e: unknown): string {
   if (m.includes("max_level")) return "البطل وصل لأقصى مستوى";
   return "حصلت مشكلة، حاول تاني";
 }
+
+/** Battle arena: one titan falls every minute of mining (until storage is full). */
+export const TITAN_EVERY_MS = 60_000;
+export function titansSlain(minedAt: number, now: number): number {
+  const ms = Math.min(STORAGE_HOURS * 3_600_000, Math.max(0, now - minedAt));
+  return Math.floor(ms / TITAN_EVERY_MS);
+}
+/** Coins each slain titan drops at the given hourly rate. */
+export function coinsPerTitan(rate: number): number {
+  return Math.round((rate / 60) * 100) / 100;
+}

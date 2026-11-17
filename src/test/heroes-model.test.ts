@@ -11,3 +11,10 @@ describe("heroes economy", () => {
   });
   it("storage caps at 3 hours", () => expect(pendingCoins(10, 0, 10 * 3_600_000)).toBe(30));
 });
+
+import { titansSlain as ts, coinsPerTitan as cpt } from "@/lib/heroes-model";
+describe("battle titans", () => {
+  it("one titan per minute", () => expect(ts(0, 5 * 60_000 + 30_000)).toBe(5));
+  it("stops at full 3h storage", () => expect(ts(0, 10 * 3_600_000)).toBe(180));
+  it("titan reward is a minute of mining", () => expect(cpt(120)).toBe(2));
+});

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BattleRouteImport } from './routes/battle'
 import { Route as HeroesRouteImport } from './routes/heroes'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as ApiPublicTonconnectManifestRouteImport } from './routes/api/public/tonconnect-manifest'
@@ -18,6 +19,11 @@ import { Route as ApiPublicWalletIconRouteImport } from './routes/api/public/wal
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BattleRoute = BattleRouteImport.update({
+  id: '/battle',
+  path: '/battle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HeroesRoute = HeroesRouteImport.update({
@@ -44,6 +50,7 @@ const ApiPublicWalletIconRoute = ApiPublicWalletIconRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/battle': typeof BattleRoute
   '/heroes': typeof HeroesRoute
   '/tasks': typeof TasksRoute
   '/api/public/tonconnect-manifest': typeof ApiPublicTonconnectManifestRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/battle': typeof BattleRoute
   '/heroes': typeof HeroesRoute
   '/tasks': typeof TasksRoute
   '/api/public/tonconnect-manifest': typeof ApiPublicTonconnectManifestRoute
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/battle': typeof BattleRoute
   '/heroes': typeof HeroesRoute
   '/tasks': typeof TasksRoute
   '/api/public/tonconnect-manifest': typeof ApiPublicTonconnectManifestRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/battle'
     | '/heroes'
     | '/tasks'
     | '/api/public/tonconnect-manifest'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/battle'
     | '/heroes'
     | '/tasks'
     | '/api/public/tonconnect-manifest'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/battle'
     | '/heroes'
     | '/tasks'
     | '/api/public/tonconnect-manifest'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BattleRoute: typeof BattleRoute
   HeroesRoute: typeof HeroesRoute
   TasksRoute: typeof TasksRoute
   ApiPublicTonconnectManifestRoute: typeof ApiPublicTonconnectManifestRoute
@@ -103,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/battle': {
+      id: '/battle'
+      path: '/battle'
+      fullPath: '/battle'
+      preLoaderRoute: typeof BattleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/heroes': {
@@ -138,6 +158,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BattleRoute: BattleRoute,
   HeroesRoute: HeroesRoute,
   TasksRoute: TasksRoute,
   ApiPublicTonconnectManifestRoute: ApiPublicTonconnectManifestRoute,
