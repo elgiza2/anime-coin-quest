@@ -14,6 +14,7 @@ import { getHeroBoard } from "@/lib/heroes.functions";
 import { totalRate, TOTAL_MAX } from "@/lib/heroes-model";
 import { getMyProfile } from "@/lib/profile.functions";
 import { getInitData, shareLink } from "@/lib/telegram";
+import { MinePassCard, VerifiedBadge } from "./MinePassCard";
 
 export function ProfilePage() {
   const [initData, setInitData] = useState("");
@@ -51,7 +52,7 @@ export function ProfilePage() {
           <img src={p?.photo_url || avatar} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = avatar; }} alt="صورة اللاعب" width={112} height={112} className="size-full rounded-full border-[3px] border-accent object-cover object-top shadow-lg" />
           <span className="absolute -bottom-2 start-1/2 -translate-x-[-50%] whitespace-nowrap rounded-full border-2 border-background bg-accent px-3 py-1 text-xs font-bold text-accent-foreground">المستوى {total ?? "—"}</span>
         </div>
-        <h1 className="mt-6 break-words text-3xl font-extrabold">{p?.first_name || p?.username || "جندي الحامية"}</h1>
+        <h1 className="mt-6 flex flex-wrap items-center justify-center gap-2 break-words text-3xl font-extrabold">{p?.first_name || p?.username || "جندي الحامية"}{board.data?.minePass && <VerifiedBadge />}</h1>
         {p?.username && <p dir="ltr" className="mt-1 text-sm font-medium text-accent">@{p.username}</p>}
         <p className="mt-2 text-sm text-foreground/80">حامية الأسوار <span className="mx-1 text-accent">·</span> {total === undefined ? "—" : `${total} / ${TOTAL_MAX}`}</p>
         {p && <p dir="ltr" className="mt-3 text-xs text-muted-foreground">ID #{p.tg_id}</p>}
@@ -62,6 +63,7 @@ export function ProfilePage() {
       {!initData && <p className="mt-3 text-center text-xs text-muted-foreground">افتح اللعبة من تيليجرام لعرض بياناتك</p>}
       {initData && (account.isPending || board.isPending) && <p role="status" className="mt-3 text-center text-sm text-muted-foreground">جارٍ تحميل ملفك…</p>}
       {(account.isError || board.isError) && <div role="alert" className="mt-3 flex items-center justify-between gap-2 text-sm"><p>تعذّر تحميل بياناتك</p><Button variant="outline" onClick={() => { void account.refetch(); void board.refetch(); }}>إعادة المحاولة</Button></div>}
+      <div className="mt-5"><MinePassCard initData={initData} /></div>
 
       <section className="mt-8">
         <div className="flex items-center justify-between"><h2 className="text-xl font-extrabold">ابنِ فريقك</h2><Button size="icon" variant="ghost" aria-label="عن دعوة الأصدقاء" title="عن دعوة الأصدقاء" onClick={() => setInfoOpen(true)} className="rounded-full border border-border text-accent">ⓘ</Button></div>

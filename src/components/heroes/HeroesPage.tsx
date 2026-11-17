@@ -19,6 +19,7 @@ import { HeroMedia } from "./HeroMedia";
 import { HEROES, TIER_SIZE, tierName, tierOf } from "./heroes-data";
 import { LevelSheet, type LevelPick } from "./LevelSheet";
 import { ShopDrawer } from "./ShopDrawer";
+import { MinePassCard } from "@/components/profile/MinePassCard";
 
 const TIERS = Array.from({ length: MAX_LEVEL / TIER_SIZE }, (_, t) => t);
 
@@ -38,8 +39,8 @@ export function HeroesPage() {
   const levels = b?.levels ?? [1, 0, 0, 0, 0];
   const balance = b?.balance ?? 0;
   const rate = totalRate(levels);
-  const pending = b ? pendingCoins(rate, b.minedAt, now) : 0;
-  const fill = b ? Math.min(1, (now - b.minedAt) / (STORAGE_HOURS * 3_600_000)) : 0;
+  const pending = b ? pendingCoins(rate, b.minedAt, now, !!b.minePass) : 0;
+  const fill = b?.minePass ? Math.min(1, (now - b.minedAt) / (STORAGE_HOURS * 3_600_000)) : 0;
   const total = levels.reduce((a, c) => a + c, 0);
   const refresh = () => qc.invalidateQueries({ queryKey: ["wall-heroes"] });
   const ok = (n: number) => { haptic("success"); toast.success(`+${formatAmount(n)} ${COIN.symbol}`); void refresh(); };
@@ -115,6 +116,7 @@ export function HeroesPage() {
       </section>
 
       {/* Mining storage */}
+      {!b?.minePass && <div className="mt-3"><MinePassCard initData={initData} /></div>}
       <section className="glass-card mt-3 rounded-3xl p-3">
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">

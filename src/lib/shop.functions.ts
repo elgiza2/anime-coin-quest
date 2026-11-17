@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { commentPayload, findPack, paymentComment, toNano, TREASURY_ADDRESS } from "./shop-model";
 import { authPlayer } from "./tasks.functions";
+import { MINE_PASS_TON } from "./mine-pass-model";
 
 const authInput = z.object({ initData: z.string().min(10).max(4096) });
 
@@ -10,9 +11,17 @@ const authInput = z.object({ initData: z.string().min(10).max(4096) });
 export const createTonPayment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => authInput.extend({ pack: z.string().max(20) }).parse(d))
   .handler(async ({ data }) => {
-    const pack = findPack(data.pack);
+    const pack = data.pack === "mine_pass" ? { id: "mine_pass", ton: MINE_PASS_TON, coins: 0 } : findPack(data.pack);
     if (!pack) throw new Error("bad_pack");
     const { user, db } = await authPlayer(data.initData);
+    if (pack.id === "mine_pass") {
+      const pass = await db.from("wall_mine_passes").select("pass_number").eq("tg_id", user.id).maybeSingle();
+      if (pass.error) throw new Error(pass.error.message);
+      if (pass.data) throw new Error("pass_already_active");
+      const pending = await db.from("wall_payments").select("id, amount_nano").eq("tg_id", user.id).eq("pack", "mine_pass").eq("status", "pending").order("created_at", { ascending: false }).limit(1).maybeSingle();
+      if (pending.error) throw new Error(pending.error.message);
+      if (pending.data) return { id: pending.data.id, address: TREASURY_ADDRESS, amount: String(pending.data.amount_nano), payload: commentPayload(paymentComment(pending.data.id)) };
+    }
     const { data: row, error } = await db
       .from("wall_payments")
       .insert({ tg_id: user.id, pack: pack.id, amount_nano: Number(toNano(pack.ton)), coins: pack.coins })

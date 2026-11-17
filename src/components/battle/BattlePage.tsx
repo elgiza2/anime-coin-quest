@@ -18,6 +18,7 @@ import { claimAdReward } from "@/lib/shop.functions";
 import { getInitData, haptic } from "@/lib/telegram";
 import { cn } from "@/lib/utils";
 import { SegmentVideo } from "./SegmentVideo";
+import { MinePassCard } from "@/components/profile/MinePassCard";
 
 const fmtLeft = (ms: number) => {
   const m = Math.max(0, Math.ceil(ms / 60_000));
@@ -38,10 +39,11 @@ export function BattlePage() {
   const guest = !initData;
   const levels = b?.levels ?? [1, 0, 0, 0, 0];
   const rate = totalRate(levels);
-  const pending = b ? pendingCoins(rate, b.minedAt, now) : 0;
-  const kills = b ? titansSlain(b.minedAt, now) : 0;
-  const full = b ? now - b.minedAt >= STORAGE_HOURS * 3_600_000 : false;
-  const fill = b ? Math.min(1, (now - b.minedAt) / (STORAGE_HOURS * 3_600_000)) : 0;
+  const miningEnabled = !!b?.minePass;
+  const pending = b ? pendingCoins(rate, b.minedAt, now, miningEnabled) : 0;
+  const kills = b ? titansSlain(b.minedAt, now, miningEnabled) : 0;
+  const full = b && miningEnabled ? now - b.minedAt >= STORAGE_HOURS * 3_600_000 : false;
+  const fill = b && miningEnabled ? Math.min(1, (now - b.minedAt) / (STORAGE_HOURS * 3_600_000)) : 0;
 
   const mine = levels.reduce((m, _, i) => (isUnlocked(i, levels) ? i : m), 0);
   const h = pick ?? mine;
@@ -95,7 +97,7 @@ export function BattlePage() {
         </div>
         <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1"><Zap className="size-3.5" />{formatAmount(rate)}/س</span>
-          <span className="flex items-center gap-1"><Clock className="size-3.5" />{b ? (full ? "المخزن مليان" : fmtLeft(b.minedAt + STORAGE_HOURS * 3_600_000 - now)) : "—"}</span>
+          <span className="flex items-center gap-1"><Clock className="size-3.5" />{b && miningEnabled ? (full ? "المخزن مليان" : fmtLeft(b.minedAt + STORAGE_HOURS * 3_600_000 - now)) : "التعدين متوقف"}</span>
         </div>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
           <div className="bg-gold-bar h-full rounded-full transition-[width] duration-1000" style={{ width: `${fill * 100}%` }} />
@@ -112,6 +114,7 @@ export function BattlePage() {
 
       {/* Hero switcher + ad boost */}
       <section className="absolute inset-x-3 bottom-24 z-10 space-y-2">
+        {!miningEnabled && <MinePassCard initData={initData} />}
         <Button variant="ghost" type="button" disabled={guest || ad.isPending} onClick={() => ad.mutate()}
           className="glass h-auto w-full rounded-2xl py-2.5 text-sm font-bold disabled:opacity-50">
           <AnimatedEmoji name="rocket" className="size-5 text-accent" /> اتفرج على إعلان واكسب +{formatAmount(adReward(rate))}
