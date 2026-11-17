@@ -8,9 +8,9 @@ import guardianVid from "@/assets/onboarding/story-wall.mp4.asset.json";
 import mindVid from "@/assets/heroes/hero-2-mind.mp4.asset.json";
 import bladeVid from "@/assets/heroes/hero-3-blade.mp4.asset.json";
 import commanderVid from "@/assets/heroes/hero-4-commander.mp4.asset.json";
-import b0 from "@/assets/battle/battle-1-rage.mp4.asset.json";
-import b1 from "@/assets/battle/battle-2-guardian.mp4.asset.json";
-import b2 from "@/assets/battle/battle-3-mind.mp4.asset.json";
+import b0 from "@/assets/battle/arena-1-rage.mp4.asset.json";
+import b1 from "@/assets/battle/arena-2-guardian.mp4.asset.json";
+import b2 from "@/assets/battle/arena-3-mind.mp4.asset.json";
 import b3 from "@/assets/battle/battle-4-blade.mp4.asset.json";
 import b4 from "@/assets/battle/battle-5-commander.mp4.asset.json";
 

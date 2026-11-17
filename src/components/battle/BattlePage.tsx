@@ -16,7 +16,6 @@ import { adReward, shopErrorMessage } from "@/lib/shop-model";
 import { claimAdReward } from "@/lib/shop.functions";
 import { getInitData, haptic } from "@/lib/telegram";
 import { cn } from "@/lib/utils";
-import { ArenaCanvas } from "./ArenaCanvas";
 import { SegmentVideo } from "./SegmentVideo";
 
 const fmtLeft = (ms: number) => {
@@ -76,12 +75,11 @@ export function BattlePage() {
     <main className="relative mx-auto h-dvh max-w-md overflow-hidden">
       {/* Battle footage */}
       {clip ? (
-        <SegmentVideo src={clip} poster={hero.image} className="absolute inset-0 size-full scale-110 object-cover blur-[2px] brightness-50" />
+        <SegmentVideo src={clip} poster={hero.image} className="absolute inset-0 size-full object-cover" />
       ) : (
-        <img src={hero.image} alt={hero.name} className="absolute inset-0 size-full object-cover brightness-50" />
+        <img src={hero.image} alt={hero.name} className="absolute inset-0 size-full object-cover" />
       )}
       <div className="battle-shade absolute inset-0" />
-      <ArenaCanvas heroImage={hero.image} />
 
       {/* Storage header */}
       <header className="glass absolute inset-x-3 top-3 z-10 rounded-[26px] p-4">
