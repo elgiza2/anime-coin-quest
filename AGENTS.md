@@ -42,3 +42,6 @@ use the editor.
 - The coin name/symbol lives only in `src/lib/coin.ts`. Why: the final name is not decided yet.
 - Hero economy (5 heroes x 200 levels, storage cap, costs) lives in src/lib/heroes-model.ts (tested) and is mirrored by wall_hero_rate/wall_hero_cost/wall_upgrade_hero in the DB; change both together. Why: UI predicts what the DB enforces.
 - TON payments: server creates a wall_payments row, wallet sends to the treasury with comment wall:<id> (BOC built by commentPayload in src/lib/shop-model.ts, no Buffer), server verifies on toncenter and credits via wall_confirm_payment. Why: credits only after on-chain proof, once.
+- Battle segments use two video decoders and seek only the hidden one before a crossfade. Why: avoid visible jumps, mirror flips and blank frames during playback.
+- Wallet uses existing Telegram-verified player/hero reads and TON Connect; do not imply an on-chain game-token balance, withdrawals or NFTs exist. Why: those services are not implemented.
+- Portable source exports must include downloaded CDN assets with local pointer URLs, migrations and setup notes, excluding secrets, user data, Git metadata, dependencies and build output. Why: another developer can continue without relying on Lovable media hosting.

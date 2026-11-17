@@ -299,3 +299,15 @@
   100% { opacity: 0; transform: translateY(-60px) scale(1); }
 }
 @utility animate-coin-pop { animation: coin-pop 1.6s ease-out forwards; }
+
+.segment-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 420ms ease-in-out; }
+.segment-video.segment-visible { opacity: 1; }
+.segment-mirrored { transform: scaleX(-1); }
+@media (prefers-reduced-motion: reduce) { .segment-video { transition: none; } }
+
+:root {
+  --wallet-surface: linear-gradient(135deg, oklch(0.38 0.07 160 / 0.92), oklch(0.23 0.025 200 / 0.95));
+  --wallet-shade: linear-gradient(to bottom, oklch(0.14 0.006 70 / 0.15), var(--background) 95%);
+}
+@utility wallet-surface { background: var(--wallet-surface); border: 1px solid var(--glass-highlight); box-shadow: var(--shadow-glass); }
+@utility wallet-shade { background: var(--wallet-shade); }
