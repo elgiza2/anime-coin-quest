@@ -289,3 +289,13 @@
 @utility animate-breathe {
   animation: hero-breathe 9s ease-in-out infinite;
 }
+
+@utility battle-shade {
+  background: linear-gradient(to bottom, oklch(0.1 0.01 60 / 0.55) 0%, transparent 30%, transparent 60%, oklch(0.1 0.01 60 / 0.75) 100%);
+}
+@keyframes coin-pop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.6); }
+  20% { opacity: 1; transform: translateY(0) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-60px) scale(1); }
+}
+@utility animate-coin-pop { animation: coin-pop 1.6s ease-out forwards; }
