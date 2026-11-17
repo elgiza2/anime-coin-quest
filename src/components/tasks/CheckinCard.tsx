@@ -23,8 +23,8 @@ function DayCell({ day, done, today, big }: { day: number; done: boolean; today:
       )}
       <span className={cn("text-[0.7rem] font-semibold", done ? "text-success" : "text-muted-foreground")}>ي{day}</span>
       <span className="relative">
-        <span className={cn("grid place-items-center rounded-full tile-gold emoji-tile", big ? "size-14" : "size-9")}>
-          <AnimatedEmoji name={big ? "gem" : "ore"} className={cn("text-primary-foreground", big ? "size-9" : "size-6")} />
+        <span className={cn("grid place-items-center rounded-full", big ? "size-14" : "size-9")}>
+          <AnimatedEmoji name={big ? "gem" : "ore"} className={cn("text-gold", big ? "size-9" : "size-6")} />
         </span>
         {done && (
           <span className="absolute -bottom-1 -left-1 grid size-4 place-items-center rounded-full bg-success text-primary-foreground ring-2 ring-background">
@@ -59,8 +59,8 @@ export function CheckinCard({
   return (
     <section className="glass-card animate-rise rounded-[1.75rem] p-4" style={{ animationDelay: "80ms" }}>
       <header className="flex items-center gap-3">
-        <span className="grid size-12 shrink-0 place-items-center rounded-2xl tile-gold emoji-tile">
-          <AnimatedEmoji name="rays" className="size-8 text-primary-foreground" />
+        <span className="grid size-12 shrink-0 place-items-center rounded-2xl">
+          <AnimatedEmoji name="rays" className="size-8 text-gold" />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="font-display text-[1.05rem] font-extrabold text-foreground">تسجيل الحضور اليومي</h2>

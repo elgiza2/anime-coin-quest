@@ -6,13 +6,6 @@ import { COIN, formatAmount } from "@/lib/coin";
 import { formatCountdown, type TaskDTO, type TaskState } from "@/lib/tasks-model";
 import { cn } from "@/lib/utils";
 
-const TILE: Record<TaskDTO["category"], string> = {
-  onchain: "tile-onchain",
-  game: "tile-game",
-  social: "tile-social",
-  partners: "tile-partners",
-};
-
 function actionLabel(task: TaskDTO, state: TaskState): string {
   if (state.type === "verify") return "تحقق";
   if (state.type === "ready") return "استلم";
@@ -46,7 +39,7 @@ export function TaskCard({
       )}
       style={{ animationDelay: `${Math.min(index, 8) * 45 + 120}ms` }}
     >
-      <span className={cn("grid size-[3.25rem] shrink-0 place-items-center rounded-2xl emoji-tile", TILE[task.category])}>
+      <span className={cn("grid size-[3.25rem] shrink-0 place-items-center rounded-2xl")}>
         <AnimatedEmoji name={emojiName(task.emoji)} className="size-8 text-foreground" />
       </span>
 
