@@ -20,7 +20,10 @@ export function ShopDrawer({ open, onOpenChange, initData, onPaid }: {
   const checkFn = useServerFn(checkTonPayment);
 
   async function buy(pack: PackId) {
-    if (!initData) return toast.error("افتح اللعبة من تيليجرام عشان تشتري");
+    if (!initData) {
+      toast.error("افتح اللعبة من تيليجرام عشان تشتري");
+      return;
+    }
     setBusy(pack);
     try {
       const ui = await getTonConnect();
