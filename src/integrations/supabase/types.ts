@@ -4256,6 +4256,35 @@ export type Database = {
         }
         Relationships: []
       }
+      wall_ad_views: {
+        Row: {
+          created_at: string
+          id: number
+          reward: number
+          tg_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          reward: number
+          tg_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          reward?: number
+          tg_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_ad_views_tg_id_fkey"
+            columns: ["tg_id"]
+            isOneToOne: false
+            referencedRelation: "wall_users"
+            referencedColumns: ["tg_id"]
+          },
+        ]
+      }
       wall_checkins: {
         Row: {
           created_at: string
@@ -4310,6 +4339,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "wall_hero_levels_tg_id_fkey"
+            columns: ["tg_id"]
+            isOneToOne: false
+            referencedRelation: "wall_users"
+            referencedColumns: ["tg_id"]
+          },
+        ]
+      }
+      wall_payments: {
+        Row: {
+          amount_nano: number
+          coins: number
+          created_at: string
+          id: string
+          pack: string
+          paid_at: string | null
+          status: string
+          tg_id: number
+          tx_hash: string | null
+        }
+        Insert: {
+          amount_nano: number
+          coins: number
+          created_at?: string
+          id?: string
+          pack: string
+          paid_at?: string | null
+          status?: string
+          tg_id: number
+          tx_hash?: string | null
+        }
+        Update: {
+          amount_nano?: number
+          coins?: number
+          created_at?: string
+          id?: string
+          pack?: string
+          paid_at?: string | null
+          status?: string
+          tg_id?: number
+          tx_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_payments_tg_id_fkey"
             columns: ["tg_id"]
             isOneToOne: false
             referencedRelation: "wall_users"
@@ -4815,8 +4888,13 @@ export type Database = {
         Args: { _note: string; _status: string; _wid: string }
         Returns: undefined
       }
+      wall_ad_reward: { Args: { _tg: number }; Returns: number }
       wall_claim_task: {
         Args: { _task: string; _tg: number; _verified: boolean }
+        Returns: number
+      }
+      wall_confirm_payment: {
+        Args: { _id: string; _tx: string }
         Returns: number
       }
       wall_daily_checkin: { Args: { _tg: number }; Returns: Json }
