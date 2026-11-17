@@ -2,11 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { AnimatedEmoji } from "@/components/emoji/AnimatedEmoji";
 import type { EmojiName } from "@/components/emoji/emoji-registry";
 
-const ITEMS: { to: "/tasks" | "/battle" | "/heroes" | "/wallet"; label: string; emoji: EmojiName }[] = [
+const ITEMS: { to: "/tasks" | "/battle" | "/heroes" | "/wallet" | "/profile"; label: string; emoji: EmojiName }[] = [
   { to: "/tasks", label: "المهام", emoji: "scout" },
   { to: "/battle", label: "ساحة الحرب", emoji: "rocket" },
   { to: "/heroes", label: "الأبطال", emoji: "shields" },
   { to: "/wallet", label: "المحفظة", emoji: "wallet" },
+  { to: "/profile", label: "الملف", emoji: "orbit" },
 ];
 
 export function BottomNav() {
