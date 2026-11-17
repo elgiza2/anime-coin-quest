@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Mandatory Mine Pass: 0.05 TON, confirmed payment, unique number, verification badge and mining gate
+- [x] Mandatory Mine Pass: 0.05 TON, confirmed payment, unique number, verification badge and mining gate; actual wallet transfer requires Telegram and a funded TON wallet
 
 - [x] Profile page: Telegram identity, progression, own paginated referral team, leaderboard and story replay; live identity reads require Telegram launch to verify
 
