@@ -5,15 +5,18 @@ import blade from "@/assets/heroes/hero-3-blade.jpg";
 import commander from "@/assets/heroes/hero-4-commander.jpg";
 import guardian from "@/assets/onboarding/v3-1-wall.jpg";
 import guardianVid from "@/assets/onboarding/story-wall.mp4.asset.json";
+import mindVid from "@/assets/heroes/hero-2-mind.mp4.asset.json";
+import bladeVid from "@/assets/heroes/hero-3-blade.mp4.asset.json";
+import commanderVid from "@/assets/heroes/hero-4-commander.mp4.asset.json";
 
 // Index = hero id in the DB (wall_hero_levels.hero). Video loops muted with the still as poster.
 export type Hero = { name: string; title: string; image: string; video?: string };
 export const HEROES: Hero[] = [
   { name: "كايل", title: "الفتى الغاضب", image: rage, video: rageVid.url },
   { name: "نايرا", title: "حارسة السور", image: guardian, video: guardianVid.url },
-  { name: "آرين", title: "العقل المدبّر", image: mind },
-  { name: "ليوك", title: "أقوى جندي", image: blade },
-  { name: "إيفان", title: "القائد الأعلى", image: commander },
+  { name: "آرين", title: "العقل المدبّر", image: mind, video: mindVid.url },
+  { name: "ليوك", title: "أقوى جندي", image: blade, video: bladeVid.url },
+  { name: "إيفان", title: "القائد الأعلى", image: commander, video: commanderVid.url },
 ];
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
