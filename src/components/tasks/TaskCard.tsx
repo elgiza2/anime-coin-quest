@@ -46,7 +46,7 @@ export function TaskCard({
       )}
       style={{ animationDelay: `${Math.min(index, 8) * 45 + 120}ms` }}
     >
-      <span className={cn("grid size-[3.25rem] shrink-0 place-items-center rounded-2xl emoji-tile", TILE[task.category])}>
+      <span className={cn("grid size-[3.25rem] shrink-0 place-items-center rounded-2xl")}>
         <AnimatedEmoji name={emojiName(task.emoji)} className="size-8 text-foreground" />
       </span>
 

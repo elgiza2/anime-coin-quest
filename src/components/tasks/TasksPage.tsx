@@ -171,20 +171,8 @@ export function TasksPage({ category }: { category: CategoryFilter }) {
 
       <div className="relative px-4 pt-[max(1.5rem,env(safe-area-inset-top))]">
         <header className="animate-rise flex flex-col items-center pt-16 text-center">
-          <p className="text-xs font-semibold tracking-wide text-accent">لوحة مهام الحامية</p>
           <h1 className="animate-slam mt-1 font-display text-5xl font-extrabold text-gold drop-shadow-lg">المهام</h1>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            <span className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-foreground">
-              <AnimatedEmoji name="sparkle" className="size-4 text-accent" />
-              {available.length} مهام متاحة
-            </span>
-            <span className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-accent">
-              <AnimatedEmoji name="ore" className="size-4 text-accent" />
-              <span dir="ltr">
-                {formatAmount(toEarn)} {COIN.symbol}
-              </span>
-              للربح
-            </span>
             {player ? (
               <span className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-foreground">
                 رصيدك
@@ -221,7 +209,7 @@ export function TasksPage({ category }: { category: CategoryFilter }) {
                       : "glass text-muted-foreground",
                   )}
                 >
-                  <span className={cn("grid size-7 place-items-center rounded-full", active ? "bg-primary-foreground/10" : "bg-background/40")}>
+                  <span className="grid size-7 place-items-center">
                     <AnimatedEmoji name={c.emoji} className={cn("size-5", active ? "text-primary-foreground" : "text-accent")} />
                   </span>
                   {c.label}
