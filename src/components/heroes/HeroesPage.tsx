@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronLeft, Lock, Plus } from "lucide-react";
+import { Check, Layers, Lock, Pickaxe, Plus, Zap } from "lucide-react";
 import { toast } from "sonner";
 
+import { BottomNav } from "@/components/BottomNav";
 import { AnimatedEmoji } from "@/components/emoji/AnimatedEmoji";
 import { useNow } from "@/components/tasks/use-now";
 import { COIN, formatAmount } from "@/lib/coin";
@@ -15,19 +15,20 @@ import { adReward, shopErrorMessage } from "@/lib/shop-model";
 import { claimAdReward } from "@/lib/shop.functions";
 import { getInitData, haptic } from "@/lib/telegram";
 import { cn } from "@/lib/utils";
-import { HEROES } from "./heroes-data";
+import { HeroMedia } from "./HeroMedia";
+import { HEROES, TIER_SIZE, tierName, tierOf } from "./heroes-data";
+import { LevelSheet, type LevelPick } from "./LevelSheet";
 import { ShopDrawer } from "./ShopDrawer";
 
-function fmtLeft(ms: number) {
-  const m = Math.max(0, Math.ceil(ms / 60000));
-  return m >= 60 ? `${Math.floor(m / 60)} س ${m % 60} د` : `${m} د`;
-}
+const TIERS = Array.from({ length: MAX_LEVEL / TIER_SIZE }, (_, t) => t);
 
 export function HeroesPage() {
   const qc = useQueryClient();
   const now = useNow(1000);
   const [initData, setInitData] = useState("");
   const [shopOpen, setShopOpen] = useState(false);
+  const [pick, setPick] = useState<LevelPick>(null);
+  const [view, setView] = useState<number | null>(null);
   useEffect(() => setInitData(getInitData()), []);
 
   const fetchBoard = useServerFn(getHeroBoard);
@@ -35,127 +36,198 @@ export function HeroesPage() {
   const b = board.data;
   const guest = !initData;
   const levels = b?.levels ?? [1, 0, 0, 0, 0];
-  const rate = totalRate(levels);
-  const elapsed = b ? now - b.minedAt : 0;
-  const pending = b ? pendingCoins(rate, b.minedAt, now) : 0;
-  const capMs = STORAGE_HOURS * 3_600_000;
-  const fill = Math.min(1, elapsed / capMs);
-  const total = levels.reduce((a, c) => a + c, 0);
   const balance = b?.balance ?? 0;
+  const rate = totalRate(levels);
+  const pending = b ? pendingCoins(rate, b.minedAt, now) : 0;
+  const fill = b ? Math.min(1, (now - b.minedAt) / (STORAGE_HOURS * 3_600_000)) : 0;
+  const total = levels.reduce((a, c) => a + c, 0);
   const refresh = () => qc.invalidateQueries({ queryKey: ["wall-heroes"] });
   const ok = (n: number) => { haptic("success"); toast.success(`+${formatAmount(n)} ${COIN.symbol}`); void refresh(); };
 
+  // "My" hero = the highest unlocked one; the page opens on it.
+  const mine = levels.reduce((m, _, i) => (isUnlocked(i, levels) ? i : m), 0);
+  const h = view ?? mine;
+  const hero = HEROES[h]!;
+  const hLvl = levels[h] ?? 0;
+  const hOpen = isUnlocked(h, levels);
+  const myLvl = levels[mine] ?? 0;
+  const nextCost = heroCost(mine, myLvl);
+
   const collectFn = useServerFn(collectMining);
   const collect = useMutation({ mutationFn: () => collectFn({ data: { initData } }), onSuccess: (r) => ok(r.amount), onError: (e) => toast.error(upgradeErrorMessage(e)) });
-
   const adFn = useServerFn(claimAdReward);
   const ad = useMutation({
     mutationFn: async () => { await showRewardedAd(); return adFn({ data: { initData } }); },
     onSuccess: (r) => ok(r.amount),
     onError: (e) => toast.error(e instanceof Error && e.message === "ad_unavailable" ? "مفيش إعلان متاح دلوقتي، جرب كمان شوية" : shopErrorMessage(e)),
   });
-
   const upFn = useServerFn(upgradeHero);
   const up = useMutation({
-    mutationFn: (hero: number) => upFn({ data: { initData, hero } }),
-    onSuccess: (r, hero) => { haptic("success"); toast.success(`${HEROES[hero]!.name} بقى مستوى ${r.level}`); void refresh(); },
+    mutationFn: (hi: number) => upFn({ data: { initData, hero: hi } }),
+    onSuccess: (r, hi) => {
+      haptic("success");
+      toast.success(`${HEROES[hi]!.name} بقى مستوى ${r.level}`);
+      setPick((p) => (p && r.level < MAX_LEVEL ? { hero: hi, level: r.level + 1 } : null));
+      void refresh();
+    },
     onError: (e) => { haptic("error"); toast.error(upgradeErrorMessage(e)); },
   });
 
-  // The strongest unlocked hero leads the page.
-  const lead = Math.max(0, ...levels.map((_, i) => (isUnlocked(i, levels) ? i : 0)));
-  const leader = HEROES[lead]!;
-
   return (
-    <main className="mx-auto min-h-dvh max-w-md px-4 pb-24 pt-3">
-      {/* Balance */}
-      <header className="flex items-center justify-between gap-3">
+    <main className="mx-auto min-h-dvh max-w-md px-4 pb-28 pt-4">
+      {/* Title + balance */}
+      <header className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs text-muted-foreground">رصيدك</p>
-          <p className="text-gold text-3xl font-extrabold leading-tight">{formatAmount(balance)} <span className="text-base">{COIN.symbol}</span></p>
+          <h1 className="text-gold text-3xl font-extrabold">فريق الأبطال</h1>
+          <p className="mt-1 text-xs text-muted-foreground">{formatAmount(TOTAL_MAX)} مستوى · 5 أبطال. رقّي عشان تعدّن أسرع.</p>
         </div>
-        <button type="button" onClick={() => setShopOpen(true)} className="btn-cta flex items-center gap-1 rounded-full px-4 py-2 text-sm font-bold">
-          <Plus className="size-4" /> شحن
+        <button type="button" onClick={() => setShopOpen(true)} className="glass flex shrink-0 items-center gap-1.5 rounded-full py-1.5 pe-1.5 ps-3 text-sm font-bold">
+          {formatAmount(balance)}
+          <span className="btn-cta grid size-6 place-items-center rounded-full"><Plus className="size-4" /></span>
         </button>
       </header>
 
-      {/* Lead hero + mining */}
-      <section className="glass relative mt-4 overflow-hidden rounded-[28px]">
-        <div className="relative h-72 overflow-hidden">
-          <img src={leader.image} alt={leader.name} width={768} height={1024} className="animate-breathe size-full object-cover object-top" />
-          <div className="hero-fade absolute inset-0" />
-          <div className="absolute right-4 top-4 glass rounded-full px-3 py-1 text-xs">المستوى الكلي {total}/{TOTAL_MAX}</div>
+      {/* My hero card */}
+      <section className="glass relative mt-4 flex overflow-hidden rounded-[28px]">
+        <div className="min-w-0 flex-1 p-4">
+          <p className="text-xs text-muted-foreground">بطلي</p>
+          <p className="text-gold truncate text-2xl font-extrabold">{tierName(mine, tierOf(Math.max(1, myLvl)))}</p>
+          <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
+            <span className="glass-card rounded-full px-2.5 py-1">⭐ مستوى {myLvl}</span>
+            <span className="glass-card flex items-center gap-1 rounded-full px-2.5 py-1"><Zap className="size-3" />{formatAmount(rate)}/س</span>
+          </div>
+          {myLvl < MAX_LEVEL && (
+            <>
+              <div className="mt-3 flex justify-between text-xs">
+                <span>التالي: مستوى {myLvl + 1}</span>
+                <span className="font-bold">{formatAmount(balance)} / {formatAmount(nextCost)}</span>
+              </div>
+              <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted">
+                <div className="bg-gold-bar h-full rounded-full" style={{ width: `${Math.min(100, (balance / nextCost) * 100)}%` }} />
+              </div>
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                {balance >= nextCost ? "تقدر ترقّي دلوقتي 🔥" : `باقي ${formatAmount(nextCost - balance)} ${COIN.symbol}`}
+              </p>
+            </>
+          )}
         </div>
-        <div className="relative -mt-20 p-4">
-          <p className="text-xs text-muted-foreground">الأرباح الجاهزة</p>
-          <p className="text-4xl font-extrabold">{formatAmount(pending)}</p>
-          <p className="text-xs text-muted-foreground">{formatAmount(rate)} {COIN.symbol} في الساعة</p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-            <div className="bg-gold-bar h-full rounded-full transition-[width]" style={{ width: `${fill * 100}%` }} />
+        <div className="relative w-32 shrink-0"><HeroMedia hero={HEROES[mine]!} /></div>
+      </section>
+
+      {/* Mining storage */}
+      <section className="glass-card mt-3 rounded-3xl p-3">
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs text-muted-foreground">المخزن ({STORAGE_HOURS} ساعات)</p>
+            <p className="text-lg font-extrabold">{formatAmount(pending)} <span className="text-xs">{COIN.symbol}</span></p>
           </div>
-          <p className={cn("mt-1.5 text-xs", fill >= 1 ? "text-destructive" : "text-muted-foreground")}>
-            {fill >= 1 ? "المخزن مليان والتعدين واقف — اجمع دلوقتي" : `المخزن يتملى بعد ${fmtLeft(capMs - elapsed)}`}
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <button type="button" disabled={guest || collect.isPending || pending <= 0} onClick={() => collect.mutate()}
-              className="btn-cta rounded-2xl py-3 font-bold disabled:opacity-50">اجمع</button>
-            <button type="button" disabled={guest || ad.isPending} onClick={() => ad.mutate()}
-              className="glass-card flex items-center justify-center gap-1.5 rounded-2xl py-3 text-sm font-semibold disabled:opacity-50">
-              <AnimatedEmoji name="rocket" className="size-5 text-accent" /> إعلان +{formatAmount(adReward(rate))}
+          <button type="button" disabled={guest || ad.isPending} onClick={() => ad.mutate()}
+            className="glass flex items-center gap-1 rounded-2xl px-3 py-2 text-xs font-semibold disabled:opacity-50">
+            <AnimatedEmoji name="rocket" className="size-4 text-accent" />+{formatAmount(adReward(rate))}
+          </button>
+          <button type="button" disabled={guest || collect.isPending || pending <= 0} onClick={() => collect.mutate()}
+            className="btn-cta rounded-2xl px-4 py-2 text-sm font-bold disabled:opacity-50">اجمع</button>
+        </div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
+          <div className="bg-gold-bar h-full rounded-full" style={{ width: `${fill * 100}%` }} />
+        </div>
+        {fill >= 1 && <p className="mt-1.5 text-xs text-destructive">المخزن مليان والتعدين واقف — اجمع دلوقتي</p>}
+      </section>
+
+      {/* Hero ranks */}
+      <h2 className="mb-3 mt-6 text-xl font-extrabold">رتب الأبطال</h2>
+      <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
+        {HEROES.map((x, i) => {
+          const open = isUnlocked(i, levels);
+          return (
+            <button key={x.name} type="button" onClick={() => setView(i)} className="flex w-[84px] shrink-0 flex-col items-center gap-1.5">
+              <span className={cn("relative size-[76px] rounded-full p-[3px]", i === h ? "bg-gold-bar" : "bg-muted")}>
+                <span className="block size-full overflow-hidden rounded-full">
+                  <img src={x.image} alt={x.name} width={768} height={1024} className={cn("size-full object-cover object-top", !open && "grayscale brightness-50")} />
+                </span>
+                {!open && <span className="glass absolute -bottom-1 start-0 grid size-7 place-items-center rounded-full"><Lock className="size-3.5" /></span>}
+                {i === mine && <span className="btn-cta absolute -bottom-1 end-0 rounded-full px-2 text-[10px] font-bold">أنت</span>}
+              </span>
+              <span className={cn("text-sm font-bold", i === h && "text-gold")}>{x.name}</span>
+              <span className="text-[11px] text-muted-foreground">مستوى {i * MAX_LEVEL + 1}-{(i + 1) * MAX_LEVEL}</span>
             </button>
+          );
+        })}
+      </div>
+
+      {/* Selected hero banner */}
+      <section className="glass mt-3 overflow-hidden rounded-[28px]">
+        <div className="relative h-60">
+          <HeroMedia hero={hero} dim={!hOpen} />
+          <div className="hero-fade absolute inset-0" />
+          <span className="glass absolute end-3 top-3 flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold">
+            <Layers className="size-3.5" /> مستوى {h * MAX_LEVEL + 1}-{(h + 1) * MAX_LEVEL}
+          </span>
+          <div className="absolute inset-x-4 bottom-3">
+            <p className="text-3xl font-extrabold">{hero.name}</p>
+            <p className="text-gold text-sm font-bold">{hero.title}</p>
           </div>
+        </div>
+        <div className="p-4">
+          <p className="text-xs text-muted-foreground">
+            من {formatAmount(heroRate(h, 1))} لحد {formatAmount(heroRate(h, MAX_LEVEL))} {COIN.symbol} في الساعة
+          </p>
+          <div className="mt-2 flex items-center gap-3">
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+              <div className="bg-gold-bar h-full rounded-full" style={{ width: `${(hLvl / MAX_LEVEL) * 100}%` }} />
+            </div>
+            <span className="text-xs">تم فتح {hLvl}/{MAX_LEVEL}</span>
+          </div>
+          {!hOpen && <p className="mt-2 text-xs text-muted-foreground">بيتفتح لما {HEROES[h - 1]!.name} يوصل مستوى {MAX_LEVEL}</p>}
         </div>
       </section>
 
-      {/* Heroes */}
-      <h2 className="mb-2 mt-6 text-lg font-bold">الأبطال</h2>
-      <ul className="space-y-3">
-        {HEROES.map((h, i) => {
-          const lvl = levels[i] ?? 0;
-          const open = isUnlocked(i, levels);
-          const max = lvl >= MAX_LEVEL;
-          const cost = heroCost(i, lvl);
+      {/* Career path */}
+      <h2 className="mt-6 text-xl font-extrabold">المسار</h2>
+      <p className="mb-3 text-xs text-muted-foreground">دوس على أي مستوى عشان تشوف هيديك إيه</p>
+      <ol className="relative space-y-3">
+        {TIERS.map((t) => {
+          const first = t * TIER_SIZE + 1;
+          const last = first + TIER_SIZE - 1;
+          const done = hLvl >= last;
+          const current = hOpen && !done && hLvl + 1 >= first;
           return (
-            <li key={h.name} className={cn("glass-card flex items-center gap-3 rounded-3xl p-2.5", !open && "opacity-60")}>
-              <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-2xl">
-                <img src={h.image} alt={h.name} loading="lazy" width={768} height={1024} className={cn("size-full object-cover object-top", !open && "grayscale")} />
-                {!open && <Lock className="absolute inset-0 m-auto size-5" />}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-2">
-                  <p className="truncate font-bold">{h.name}</p>
-                  <span className="text-xs text-muted-foreground">{lvl}/{MAX_LEVEL}</span>
+            <li key={t} className="flex items-stretch gap-2.5">
+              <div className={cn("relative flex w-full flex-col rounded-3xl p-3", current ? "glass ring-2 ring-success" : "glass-card", !done && !current && "opacity-70")}>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-gold text-lg font-extrabold">{tierName(h, t)}</p>
+                    <p className="text-xs text-muted-foreground">{formatAmount(heroRate(h, first))}–{formatAmount(heroRate(h, last))}/س</p>
+                  </div>
+                  {done ? (
+                    <span className="glass rounded-full px-2.5 py-1 text-xs text-gold"><Check className="inline size-3" /> مفتوح</span>
+                  ) : current ? (
+                    <span className="rounded-full bg-success px-2.5 py-1 text-xs font-bold text-background"><Pickaxe className="inline size-3" /> بيعدّن</span>
+                  ) : (
+                    <span className="glass rounded-full px-2.5 py-1 text-xs"><Lock className="inline size-3" /> {formatAmount(heroCost(h, first - 1))}</span>
+                  )}
                 </div>
-                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
-                  <div className="bg-gold-bar h-full rounded-full" style={{ width: `${(lvl / MAX_LEVEL) * 100}%` }} />
+                <div className="mt-2.5 grid grid-cols-10 gap-1">
+                  {Array.from({ length: TIER_SIZE }, (_, k) => first + k).map((n) => (
+                    <button key={n} type="button" onClick={() => setPick({ hero: h, level: n })}
+                      className={cn("rounded-lg py-1.5 text-[11px] font-bold",
+                        n <= hLvl ? "bg-gold-bar text-primary-foreground" : n === hLvl + 1 && hOpen ? "ring-2 ring-accent" : "bg-muted text-muted-foreground",
+                        n === hLvl && "ring-2 ring-success")}>
+                      {n}
+                    </button>
+                  ))}
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {open ? `+${formatAmount(heroRate(i, lvl))} في الساعة` : `يفتح لما ${HEROES[i - 1]!.name} يوصل 200`}
-                </p>
               </div>
-              {open && (
-                <button type="button" disabled={guest || max || up.isPending || balance < cost} onClick={() => up.mutate(i)}
-                  className="btn-cta flex shrink-0 flex-col items-center rounded-2xl px-3 py-2 disabled:opacity-40">
-                  <span className="text-xs font-bold">{max ? "مكتمل" : "رقّي"}</span>
-                  {!max && <span className="text-[11px]">{formatAmount(cost)}</span>}
-                </button>
-              )}
             </li>
           );
         })}
-      </ul>
-
-      <Link to="/tasks" className="glass-card mt-4 flex items-center gap-3 rounded-3xl p-4">
-        <AnimatedEmoji name="sparkle" className="size-8 text-accent" />
-        <div className="flex-1"><p className="font-semibold">عملات ببلاش</p><p className="text-xs text-muted-foreground">المهام، الحضور اليومي، ودعوة الأصحاب</p></div>
-        <ChevronLeft className="size-5" />
-      </Link>
+      </ol>
 
       {/* Leaderboard */}
       <section className="mt-6">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-bold">المتصدرين</h2>
-          {b && <span className="glass rounded-full px-3 py-1 text-xs">ترتيبك #{b.rank}</span>}
+          <h2 className="text-xl font-extrabold">المتصدرين</h2>
+          {b && <span className="glass rounded-full px-3 py-1 text-xs">ترتيبك #{b.rank} · {total} مستوى</span>}
         </div>
         <ol className="glass-card divide-y divide-border rounded-3xl">
           {(b?.leaders ?? []).slice(0, 10).map((l, i) => (
@@ -170,7 +242,10 @@ export function HeroesPage() {
         </ol>
       </section>
 
+      <LevelSheet pick={pick} onClose={() => setPick(null)} levels={levels} unlocked={pick ? isUnlocked(pick.hero, levels) : false}
+        balance={balance} busy={up.isPending || guest} onUpgrade={(hi) => up.mutate(hi)} onShop={() => { setPick(null); setShopOpen(true); }} />
       <ShopDrawer open={shopOpen} onOpenChange={setShopOpen} initData={initData} onPaid={() => void refresh()} />
+      <BottomNav />
     </main>
   );
 }

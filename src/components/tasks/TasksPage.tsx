@@ -12,6 +12,7 @@ import { getInitData, haptic, openExternal, shareLink } from "@/lib/telegram";
 import { claimCheckin, claimTask, getMyBoard, listTasks, saveWallet, startTask } from "@/lib/tasks.functions";
 import { claimErrorMessage, isAvailable, taskState, type TaskCategory, type TaskDTO } from "@/lib/tasks-model";
 import { cn } from "@/lib/utils";
+import { BottomNav } from "@/components/BottomNav";
 import { CheckinCard } from "./CheckinCard";
 import { TaskCard } from "./TaskCard";
 import { useNow } from "./use-now";
@@ -159,7 +160,7 @@ export function TasksPage({ category }: { category: CategoryFilter }) {
   };
 
   return (
-    <main className="relative mx-auto min-h-dvh w-full max-w-md overflow-x-hidden bg-background pb-12">
+    <main className="relative mx-auto min-h-dvh w-full max-w-md overflow-x-hidden bg-background pb-28">
       {/* Garrison hall backdrop with a flickering lantern */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[27rem] overflow-hidden">
         <img src={hallImage} alt="" width={720} height={1271} className="h-full w-full object-cover object-top" />
@@ -237,6 +238,7 @@ export function TasksPage({ category }: { category: CategoryFilter }) {
           )}
         </section>
       </div>
+      <BottomNav />
     </main>
   );
 }
